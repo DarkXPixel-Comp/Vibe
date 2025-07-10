@@ -1,62 +1,118 @@
-# Node rules:
-## Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
-.grunt
+# ===================
+# Global
+# ===================
 
-## Dependency directory
-## Commenting this out is preferred by some people, see
-## https://docs.npmjs.com/misc/faq#should-i-check-my-node_modules-folder-into-git
-node_modules
-
-# Book build output
-_book
-
-# eBook build output
-*.epub
-*.mobi
-*.pdf
-
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
+# OS junk
 .DS_Store
-.atom/
-.build/
-.buildlog/
-.history
-.svn/
-.swiftpm/
-migrate_working_dir/
+Thumbs.db
 
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Compiled object files
+*.o
+*.obj
+*.so
+*.dll
+*.dylib
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+*.bin
+
+# ===================
+# Go
+# ===================
+
+# Binaries
+*.exe
+*.test
+*.out
+
+# Dependency directories
+/vendor/
+/bin/
+/pkg/
+
+# Build output
+*.coverprofile
+
+# ===================
+# C++
+# ===================
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Qt
+*.pro.user
+*.moc
+*.qrc
+*.autosave
+
+# Code::Blocks
+*.depend
+*.layout
+
+# Xcode
+*.xcworkspace
+*.xcuserstate
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+
+# ===================
+# Flutter / Dart
+# ===================
+
+# Build and intermediate files
+**/build/
+**/.dart_tool/
+**/.packages
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.flutter-plugins-dependencies
+**/.metadata
+
+# iOS
+ios/Flutter/Generated.xcconfig
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/engine/
+ios/Pods/
+ios/.symlinks/
+ios/Runner.xcworkspace/
+
+# Android
+.android/
+.gradle/
+**/local.properties
+**/app/*.iml
 .idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# Web
+web/.dart_tool/
 
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
+# Pub
+pubspec.lock
+.packages
 
-# Symbolication related
-app.*.symbols
+# Firebase / Crashlytics (if used)
+firebase_app_id_file.json
 
-# Obfuscation related
-app.*.map.json
+# Misc
+*.iml
+*.lock
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
