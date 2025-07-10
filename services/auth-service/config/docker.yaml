@@ -1,0 +1,10 @@
+database:
+  host: "postgres-auth"
+  port: 5432
+  user: "postgres"
+  password: "postgres"
+  dbname: "vibe_auth"
+  sslmode: "disable"
+JWT:
+  jwt_secret: "008b057678d1f6cbc8ddced4b387b92334006894686164d1de8efe957c74ed88"
+  jwt_expiration_hours: "24"

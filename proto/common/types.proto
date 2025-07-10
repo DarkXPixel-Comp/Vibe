@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package common;
+
+option go_package = "github.com/DarkXPixel/Vibe/proto/common";
+
+message UserId {
+    string id = 1;
+}
+
+message Timestamp {
+    int64 unix = 1;
+}
