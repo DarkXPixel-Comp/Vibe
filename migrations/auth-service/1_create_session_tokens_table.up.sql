@@ -1,4 +1,4 @@
-CREATE EXTENSION IF NOT EXISTS "pgcrypto"; -- для gen_random_uuid()
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 CREATE TABLE IF NOT EXISTS session_tokens (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

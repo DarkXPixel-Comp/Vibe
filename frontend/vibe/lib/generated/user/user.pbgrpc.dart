@@ -32,24 +32,24 @@ class UserServiceClient extends $grpc.Client {
 
   UserServiceClient(super.channel, {super.options, super.interceptors});
 
-  $grpc.ResponseFuture<$0.UserProfile> getUser($0.GetUserRequest request, {$grpc.CallOptions? options,}) {
-    return $createUnaryCall(_$getUser, request, options: options);
+  $grpc.ResponseFuture<$0.UserResponse> getOrCreateUser($0.GetOrCreateUserRequest request, {$grpc.CallOptions? options,}) {
+    return $createUnaryCall(_$getOrCreateUser, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.UserProfile> updateUser($0.UpdateUserRequest request, {$grpc.CallOptions? options,}) {
-    return $createUnaryCall(_$updateUser, request, options: options);
+  $grpc.ResponseFuture<$0.UserResponse> getUserByPhone($0.GetUserByPhoneRequest request, {$grpc.CallOptions? options,}) {
+    return $createUnaryCall(_$getUserByPhone, request, options: options);
   }
 
     // method descriptors
 
-  static final _$getUser = $grpc.ClientMethod<$0.GetUserRequest, $0.UserProfile>(
-      '/user.UserService/GetUser',
-      ($0.GetUserRequest value) => value.writeToBuffer(),
-      $0.UserProfile.fromBuffer);
-  static final _$updateUser = $grpc.ClientMethod<$0.UpdateUserRequest, $0.UserProfile>(
-      '/user.UserService/UpdateUser',
-      ($0.UpdateUserRequest value) => value.writeToBuffer(),
-      $0.UserProfile.fromBuffer);
+  static final _$getOrCreateUser = $grpc.ClientMethod<$0.GetOrCreateUserRequest, $0.UserResponse>(
+      '/user.UserService/GetOrCreateUser',
+      ($0.GetOrCreateUserRequest value) => value.writeToBuffer(),
+      $0.UserResponse.fromBuffer);
+  static final _$getUserByPhone = $grpc.ClientMethod<$0.GetUserByPhoneRequest, $0.UserResponse>(
+      '/user.UserService/GetUserByPhone',
+      ($0.GetUserByPhoneRequest value) => value.writeToBuffer(),
+      $0.UserResponse.fromBuffer);
 }
 
 @$pb.GrpcServiceName('user.UserService')
@@ -57,32 +57,32 @@ abstract class UserServiceBase extends $grpc.Service {
   $core.String get $name => 'user.UserService';
 
   UserServiceBase() {
-    $addMethod($grpc.ServiceMethod<$0.GetUserRequest, $0.UserProfile>(
-        'GetUser',
-        getUser_Pre,
+    $addMethod($grpc.ServiceMethod<$0.GetOrCreateUserRequest, $0.UserResponse>(
+        'GetOrCreateUser',
+        getOrCreateUser_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $0.GetUserRequest.fromBuffer(value),
-        ($0.UserProfile value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$0.UpdateUserRequest, $0.UserProfile>(
-        'UpdateUser',
-        updateUser_Pre,
+        ($core.List<$core.int> value) => $0.GetOrCreateUserRequest.fromBuffer(value),
+        ($0.UserResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.GetUserByPhoneRequest, $0.UserResponse>(
+        'GetUserByPhone',
+        getUserByPhone_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $0.UpdateUserRequest.fromBuffer(value),
-        ($0.UserProfile value) => value.writeToBuffer()));
+        ($core.List<$core.int> value) => $0.GetUserByPhoneRequest.fromBuffer(value),
+        ($0.UserResponse value) => value.writeToBuffer()));
   }
 
-  $async.Future<$0.UserProfile> getUser_Pre($grpc.ServiceCall $call, $async.Future<$0.GetUserRequest> $request) async {
-    return getUser($call, await $request);
+  $async.Future<$0.UserResponse> getOrCreateUser_Pre($grpc.ServiceCall $call, $async.Future<$0.GetOrCreateUserRequest> $request) async {
+    return getOrCreateUser($call, await $request);
   }
 
-  $async.Future<$0.UserProfile> getUser($grpc.ServiceCall call, $0.GetUserRequest request);
+  $async.Future<$0.UserResponse> getOrCreateUser($grpc.ServiceCall call, $0.GetOrCreateUserRequest request);
 
-  $async.Future<$0.UserProfile> updateUser_Pre($grpc.ServiceCall $call, $async.Future<$0.UpdateUserRequest> $request) async {
-    return updateUser($call, await $request);
+  $async.Future<$0.UserResponse> getUserByPhone_Pre($grpc.ServiceCall $call, $async.Future<$0.GetUserByPhoneRequest> $request) async {
+    return getUserByPhone($call, await $request);
   }
 
-  $async.Future<$0.UserProfile> updateUser($grpc.ServiceCall call, $0.UpdateUserRequest request);
+  $async.Future<$0.UserResponse> getUserByPhone($grpc.ServiceCall call, $0.GetUserByPhoneRequest request);
 
 }

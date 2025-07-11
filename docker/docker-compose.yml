@@ -27,15 +27,16 @@ services:
     container_name: vibe-auth-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
+      #POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: vibe_auth
+    #  POSTGRES_DB: vibe_auth
     ports:
       - "5432:5432"
     volumes:
       - pgdata-auth:/var/lib/postgresql/data
       - ./postgres/custom-pg_hba.conf:/etc/postgresql/custom-pg_hba.conf
       - ./postgres/custom-postgresql.conf:/etc/postgresql/custom-postgresql.conf
+      - ./init/init.sql:/docker-entrypoint-initdb.d/init.sql
     command: [
       "postgres",
       "-c", "config_file=/etc/postgresql/custom-postgresql.conf"

@@ -1,0 +1,15 @@
+postgres:
+  host: "localhost"
+  port: 5432
+  user: "user_user"
+  password: "user_pass"
+  dbname: "vibe_user"
+  sslmode: "disable"
+grpc:
+  port: 50033
+  timeout: 60s
+redis:
+  host: "localhost"
+  port: "6379"
+  password: "password"
+

@@ -28,5 +28,5 @@ message User {
   string user_name = 3;
   string created_at = 4;
   string updated_at = 5;
-  string avatar_thumbnail_url = 6;
+  //string avatar_thumbnail_url = 6;
 }

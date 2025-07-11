@@ -23,20 +23,26 @@ type AuthService interface {
 }
 
 type authService struct {
-	redisRep  repository.RedisRepository
-	jwtConfig *config.JWTConfig
-	db        *pgxpool.Pool
+	redisRep   repository.RedisRepository
+	jwtConfig  *config.JWTConfig
+	db         *pgxpool.Pool
+	userClient *repository.UserClient
 }
 
-func NewAuthSevice(redisRep repository.RedisRepository, jwtConfig *config.JWTConfig, db *pgxpool.Pool) AuthService {
+func NewAuthSevice(redisRep repository.RedisRepository, jwtConfig *config.JWTConfig, db *pgxpool.Pool, userClient *repository.UserClient) AuthService {
 	return &authService{
-		redisRep:  redisRep,
-		jwtConfig: jwtConfig,
-		db:        db,
+		redisRep:   redisRep,
+		jwtConfig:  jwtConfig,
+		db:         db,
+		userClient: userClient,
 	}
 }
 
 func (s *authService) SendCode(ctx context.Context, phone string) (string, error) {
+	if limited, _ := s.IsSendCodeRateLimited(ctx, phone); limited {
+		return "", fmt.Errorf("too many attempts, please wait")
+	}
+
 	code, err := utils.GenerateSMSCode()
 	if err != nil {
 		return "", fmt.Errorf("error generate code")
@@ -56,18 +62,26 @@ func (s *authService) SendCode(ctx context.Context, phone string) (string, error
 }
 
 func (s *authService) VerifyCode(ctx context.Context, token, code string) (*model.AuthResponse, error) {
+	if limited, _ := s.IsVerifyCodeRateLimited(ctx, token); limited {
+		return nil, fmt.Errorf("too many attempts, please wait")
+	}
 	val, err := s.redisRep.Get(ctx, token)
 	if err != nil {
 		return nil, fmt.Errorf("invalid code")
 	}
 
-	_, err = utils.ValidateAuthJWTToken(token, s.jwtConfig.Secret)
+	phone, err := utils.ValidateAuthJWTToken(token, s.jwtConfig.Secret)
 	if err != nil {
 		return nil, fmt.Errorf("invalid token")
 	}
 
 	if val != code {
 		return nil, fmt.Errorf("invalid code")
+	}
+
+	user, err := s.userClient.GetOrCreateUser(ctx, phone)
+	if err != nil {
+		return nil, fmt.Errorf("error getorcreateuser")
 	}
 
 	tok, err := utils.GenerateToken32()
@@ -82,14 +96,14 @@ func (s *authService) VerifyCode(ctx context.Context, token, code string) (*mode
 		VALUES ($1, $2, NOW(), NOW(), false)
 	`
 
-	_, err = s.db.Exec(ctx, query, "123e4567-e89b-12d3-a456-426614174000", hashedToken)
+	_, err = s.db.Exec(ctx, query, user.GetUserId(), hashedToken)
 	if err != nil {
 		return nil, fmt.Errorf("falied to save token: %w", err)
 	}
 
 	return &model.AuthResponse{
 		Token:   tok,
-		User_id: "123",
+		User_id: user.UserId,
 	}, nil
 }
 
@@ -131,4 +145,44 @@ func (s *authService) ValidateToken(ctx context.Context, token string) (string, 
 	}
 
 	return tokenData.UserID, nil
+}
+
+func (s *authService) IsVerifyCodeRateLimited(ctx context.Context, phone string) (bool, error) {
+	const rateLimitKeyPrefix = "verify_limit:"
+	key := rateLimitKeyPrefix + phone
+
+	count, err := s.redisRep.GetClient().Incr(ctx, key).Result()
+	if err != nil {
+		return false, err
+	}
+
+	if count == 1 {
+		s.redisRep.GetClient().Expire(ctx, key, time.Minute*1)
+	}
+
+	if count > 3 {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func (s *authService) IsSendCodeRateLimited(ctx context.Context, phone string) (bool, error) {
+	const rateLimitKeyPrefix = "send_code_limit:"
+	key := rateLimitKeyPrefix + phone
+
+	count, err := s.redisRep.GetClient().Incr(ctx, key).Result()
+	if err != nil {
+		return false, err
+	}
+
+	if count == 1 {
+		s.redisRep.GetClient().Expire(ctx, key, time.Minute*5)
+	}
+
+	if count > 1 {
+		return true, nil
+	}
+
+	return false, nil
 }

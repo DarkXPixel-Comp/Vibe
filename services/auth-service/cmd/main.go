@@ -28,6 +28,7 @@ type App struct {
 	config       *config.Config
 	db           *pgxpool.Pool
 	redis        repository.RedisRepository
+	userClient   *repository.UserClient
 }
 
 func initApp() (*App, error) {
@@ -49,9 +50,15 @@ func initApp() (*App, error) {
 	}
 	//creds, err := credentials.NewClientTLSFromCert()
 
+	userClient, err := repository.NewUserClient("localhost:50033")
+	if err != nil {
+		return nil, fmt.Errorf("error connect user-service:%w", err)
+	}
+
+	app.userClient = userClient
 	app.db = db
 	app.grpcServer = grpc.NewServer()
-	app._authService = service.NewAuthSevice(app.redis, &conf.JWT, app.db)
+	app._authService = service.NewAuthSevice(app.redis, &conf.JWT, app.db, app.userClient)
 	app.handler = handler.NewAuthHandler(app._authService)
 
 	//auth.RegisterAuthServiceServer(app.grpcServer, app.authService)

@@ -1,0 +1,1 @@
+migrate -database "postgres://user_user:user_pass@localhost:5432/vibe_user?sslmode=disable" -path . up
