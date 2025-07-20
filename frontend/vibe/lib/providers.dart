@@ -1,8 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grpc/grpc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibe/generated/auth/auth.pbgrpc.dart';
 import 'package:vibe/services/auth_service.dart';
+
+final secureStorageProvider = Provider<FlutterSecureStorage>((ref) {
+    return const FlutterSecureStorage();
+},);
 
 final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
   throw UnimplementedError(); 
@@ -21,6 +27,7 @@ final authClientProvider = Provider<AuthServiceClient>((ref) {
 final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService(
     ref.read(authClientProvider),
-    ref.read(sharedPreferencesProvider));
+    ref.read(secureStorageProvider),
+    sharedPrefs: kIsWeb ? ref.read(sharedPreferencesProvider) : null);
 });
 

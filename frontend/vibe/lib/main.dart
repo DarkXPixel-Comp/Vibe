@@ -1,18 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:grpc/grpc.dart';
-import 'package:grpc/grpc_connection_interface.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vibe/generated/auth/auth.pbgrpc.dart';
 import 'package:vibe/providers.dart';
 import 'package:vibe/screens/login_screen.dart';
-import 'package:vibe/screens/welcome_screen.dart';
-import 'package:vibe/services/auth_service.dart';
-import 'package:vibe/theme/colors.dart';
-import 'package:vibe/theme/app_theme.dart';
-import 'package:flutter/cupertino.dart';
-import 'router.dart';
-import 'package:routemaster/routemaster.dart';
-import 'package:vibe/providers/theme_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 
@@ -37,6 +26,9 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
           cardTheme: CardThemeData(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+            elevation: 2.0,
+            color: Colors.white,
+            surfaceTintColor: Colors.teal.shade50
           ),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
@@ -44,7 +36,8 @@ class MyApp extends StatelessWidget {
             )
           )
         ),
-        initialRoute: '/login',
+       // initialRoute: '/login',
+       home: AuthCheckScreen(),
         routes: {
           '/login': (context) => LoginScreen(),
           '/chats': (context) => Scaffold(
@@ -52,6 +45,35 @@ class MyApp extends StatelessWidget {
             body: Center(child: Text('Chats list (Development)'),),
           )
         },
+        debugShowCheckedModeBanner: false,
       );
+  }
+}
+
+class AuthCheckScreen extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return FutureBuilder<bool>(
+      future: ref.read(authServiceProvider).validateToken(),
+      builder: (context, snapshot) {
+        if(snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            body: Center(child: CircularProgressIndicator(),),
+          );
+        }
+        if (snapshot.hasData && snapshot.data == true) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.pushReplacementNamed(context, '/chats');
+          });
+        } else {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.pushReplacementNamed(context, '/login');
+          });
+        }
+        return Scaffold(
+          body: Center(child: CircularProgressIndicator(),),
+        );
+      },
+    );
   }
 }
