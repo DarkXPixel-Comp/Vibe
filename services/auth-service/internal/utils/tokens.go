@@ -18,5 +18,4 @@ func GenerateToken32() (string, error) {
 		return "", err
 	}
 	return hex.EncodeToString(b), nil
-
 }

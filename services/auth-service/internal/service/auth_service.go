@@ -39,9 +39,9 @@ func NewAuthSevice(redisRep repository.RedisRepository, jwtConfig *config.JWTCon
 }
 
 func (s *authService) SendCode(ctx context.Context, phone string) (string, error) {
-	if limited, _ := s.IsSendCodeRateLimited(ctx, phone); limited {
-		return "", fmt.Errorf("too many attempts, please wait")
-	}
+	// if limited, _ := s.IsSendCodeRateLimited(ctx, phone); limited {
+	// 	return "", fmt.Errorf("too many attempts, please wait")
+	// }
 
 	code, err := utils.GenerateSMSCode()
 	if err != nil {
@@ -62,9 +62,9 @@ func (s *authService) SendCode(ctx context.Context, phone string) (string, error
 }
 
 func (s *authService) VerifyCode(ctx context.Context, token, code string) (*model.AuthResponse, error) {
-	if limited, _ := s.IsVerifyCodeRateLimited(ctx, token); limited {
-		return nil, fmt.Errorf("too many attempts, please wait")
-	}
+	// if limited, _ := s.IsVerifyCodeRateLimited(ctx, token); limited {
+	// 	return nil, fmt.Errorf("too many attempts, please wait")
+	// }
 	val, err := s.redisRep.Get(ctx, token)
 	if err != nil {
 		return nil, fmt.Errorf("invalid code")

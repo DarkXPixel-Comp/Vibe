@@ -27,18 +27,26 @@ class PhoneNumberRequest extends $pb.GeneratedMessage {
 
   PhoneNumberRequest._();
 
-  factory PhoneNumberRequest.fromBuffer($core.List<$core.int> data, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(data, registry);
-  factory PhoneNumberRequest.fromJson($core.String json, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(json, registry);
+  factory PhoneNumberRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory PhoneNumberRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'PhoneNumberRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'auth'), createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'PhoneNumberRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'auth'),
+      createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'phoneNumber')
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   PhoneNumberRequest clone() => PhoneNumberRequest()..mergeFromMessage(this);
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  PhoneNumberRequest copyWith(void Function(PhoneNumberRequest) updates) => super.copyWith((message) => updates(message as PhoneNumberRequest)) as PhoneNumberRequest;
+  PhoneNumberRequest copyWith(void Function(PhoneNumberRequest) updates) =>
+      super.copyWith((message) => updates(message as PhoneNumberRequest))
+          as PhoneNumberRequest;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -47,9 +55,11 @@ class PhoneNumberRequest extends $pb.GeneratedMessage {
   static PhoneNumberRequest create() => PhoneNumberRequest._();
   @$core.override
   PhoneNumberRequest createEmptyInstance() => create();
-  static $pb.PbList<PhoneNumberRequest> createRepeated() => $pb.PbList<PhoneNumberRequest>();
+  static $pb.PbList<PhoneNumberRequest> createRepeated() =>
+      $pb.PbList<PhoneNumberRequest>();
   @$core.pragma('dart2js:noInline')
-  static PhoneNumberRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PhoneNumberRequest>(create);
+  static PhoneNumberRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<PhoneNumberRequest>(create);
   static PhoneNumberRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -77,20 +87,28 @@ class SendCodeResponse extends $pb.GeneratedMessage {
 
   SendCodeResponse._();
 
-  factory SendCodeResponse.fromBuffer($core.List<$core.int> data, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(data, registry);
-  factory SendCodeResponse.fromJson($core.String json, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(json, registry);
+  factory SendCodeResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory SendCodeResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'SendCodeResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'auth'), createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'SendCodeResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'auth'),
+      createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'message')
     ..aOB(2, _omitFieldNames ? '' : 'success')
     ..aOS(3, _omitFieldNames ? '' : 'token')
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   SendCodeResponse clone() => SendCodeResponse()..mergeFromMessage(this);
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  SendCodeResponse copyWith(void Function(SendCodeResponse) updates) => super.copyWith((message) => updates(message as SendCodeResponse)) as SendCodeResponse;
+  SendCodeResponse copyWith(void Function(SendCodeResponse) updates) =>
+      super.copyWith((message) => updates(message as SendCodeResponse))
+          as SendCodeResponse;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -99,9 +117,11 @@ class SendCodeResponse extends $pb.GeneratedMessage {
   static SendCodeResponse create() => SendCodeResponse._();
   @$core.override
   SendCodeResponse createEmptyInstance() => create();
-  static $pb.PbList<SendCodeResponse> createRepeated() => $pb.PbList<SendCodeResponse>();
+  static $pb.PbList<SendCodeResponse> createRepeated() =>
+      $pb.PbList<SendCodeResponse>();
   @$core.pragma('dart2js:noInline')
-  static SendCodeResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SendCodeResponse>(create);
+  static SendCodeResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<SendCodeResponse>(create);
   static SendCodeResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -147,20 +167,28 @@ class VerifyCodeRequest extends $pb.GeneratedMessage {
 
   VerifyCodeRequest._();
 
-  factory VerifyCodeRequest.fromBuffer($core.List<$core.int> data, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(data, registry);
-  factory VerifyCodeRequest.fromJson($core.String json, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(json, registry);
+  factory VerifyCodeRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory VerifyCodeRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'VerifyCodeRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'auth'), createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'VerifyCodeRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'auth'),
+      createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'phoneNumber')
     ..aOS(2, _omitFieldNames ? '' : 'code')
     ..aOS(3, _omitFieldNames ? '' : 'token')
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   VerifyCodeRequest clone() => VerifyCodeRequest()..mergeFromMessage(this);
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  VerifyCodeRequest copyWith(void Function(VerifyCodeRequest) updates) => super.copyWith((message) => updates(message as VerifyCodeRequest)) as VerifyCodeRequest;
+  VerifyCodeRequest copyWith(void Function(VerifyCodeRequest) updates) =>
+      super.copyWith((message) => updates(message as VerifyCodeRequest))
+          as VerifyCodeRequest;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -169,9 +197,11 @@ class VerifyCodeRequest extends $pb.GeneratedMessage {
   static VerifyCodeRequest create() => VerifyCodeRequest._();
   @$core.override
   VerifyCodeRequest createEmptyInstance() => create();
-  static $pb.PbList<VerifyCodeRequest> createRepeated() => $pb.PbList<VerifyCodeRequest>();
+  static $pb.PbList<VerifyCodeRequest> createRepeated() =>
+      $pb.PbList<VerifyCodeRequest>();
   @$core.pragma('dart2js:noInline')
-  static VerifyCodeRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<VerifyCodeRequest>(create);
+  static VerifyCodeRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<VerifyCodeRequest>(create);
   static VerifyCodeRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -213,18 +243,27 @@ class ValidateTokenRequest extends $pb.GeneratedMessage {
 
   ValidateTokenRequest._();
 
-  factory ValidateTokenRequest.fromBuffer($core.List<$core.int> data, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(data, registry);
-  factory ValidateTokenRequest.fromJson($core.String json, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(json, registry);
+  factory ValidateTokenRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory ValidateTokenRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ValidateTokenRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'auth'), createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'ValidateTokenRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'auth'),
+      createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'token')
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  ValidateTokenRequest clone() => ValidateTokenRequest()..mergeFromMessage(this);
+  ValidateTokenRequest clone() =>
+      ValidateTokenRequest()..mergeFromMessage(this);
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  ValidateTokenRequest copyWith(void Function(ValidateTokenRequest) updates) => super.copyWith((message) => updates(message as ValidateTokenRequest)) as ValidateTokenRequest;
+  ValidateTokenRequest copyWith(void Function(ValidateTokenRequest) updates) =>
+      super.copyWith((message) => updates(message as ValidateTokenRequest))
+          as ValidateTokenRequest;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -233,9 +272,11 @@ class ValidateTokenRequest extends $pb.GeneratedMessage {
   static ValidateTokenRequest create() => ValidateTokenRequest._();
   @$core.override
   ValidateTokenRequest createEmptyInstance() => create();
-  static $pb.PbList<ValidateTokenRequest> createRepeated() => $pb.PbList<ValidateTokenRequest>();
+  static $pb.PbList<ValidateTokenRequest> createRepeated() =>
+      $pb.PbList<ValidateTokenRequest>();
   @$core.pragma('dart2js:noInline')
-  static ValidateTokenRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ValidateTokenRequest>(create);
+  static ValidateTokenRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ValidateTokenRequest>(create);
   static ValidateTokenRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -261,19 +302,28 @@ class ValidateTokenRespone extends $pb.GeneratedMessage {
 
   ValidateTokenRespone._();
 
-  factory ValidateTokenRespone.fromBuffer($core.List<$core.int> data, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(data, registry);
-  factory ValidateTokenRespone.fromJson($core.String json, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(json, registry);
+  factory ValidateTokenRespone.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory ValidateTokenRespone.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ValidateTokenRespone', package: const $pb.PackageName(_omitMessageNames ? '' : 'auth'), createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'ValidateTokenRespone',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'auth'),
+      createEmptyInstance: create)
     ..aOB(1, _omitFieldNames ? '' : 'success')
     ..aOS(2, _omitFieldNames ? '' : 'userId')
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  ValidateTokenRespone clone() => ValidateTokenRespone()..mergeFromMessage(this);
+  ValidateTokenRespone clone() =>
+      ValidateTokenRespone()..mergeFromMessage(this);
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  ValidateTokenRespone copyWith(void Function(ValidateTokenRespone) updates) => super.copyWith((message) => updates(message as ValidateTokenRespone)) as ValidateTokenRespone;
+  ValidateTokenRespone copyWith(void Function(ValidateTokenRespone) updates) =>
+      super.copyWith((message) => updates(message as ValidateTokenRespone))
+          as ValidateTokenRespone;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -282,9 +332,11 @@ class ValidateTokenRespone extends $pb.GeneratedMessage {
   static ValidateTokenRespone create() => ValidateTokenRespone._();
   @$core.override
   ValidateTokenRespone createEmptyInstance() => create();
-  static $pb.PbList<ValidateTokenRespone> createRepeated() => $pb.PbList<ValidateTokenRespone>();
+  static $pb.PbList<ValidateTokenRespone> createRepeated() =>
+      $pb.PbList<ValidateTokenRespone>();
   @$core.pragma('dart2js:noInline')
-  static ValidateTokenRespone getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ValidateTokenRespone>(create);
+  static ValidateTokenRespone getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ValidateTokenRespone>(create);
   static ValidateTokenRespone? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -323,21 +375,29 @@ class AuthResponse extends $pb.GeneratedMessage {
 
   AuthResponse._();
 
-  factory AuthResponse.fromBuffer($core.List<$core.int> data, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(data, registry);
-  factory AuthResponse.fromJson($core.String json, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(json, registry);
+  factory AuthResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory AuthResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'AuthResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'auth'), createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'AuthResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'auth'),
+      createEmptyInstance: create)
     ..aOB(1, _omitFieldNames ? '' : 'success')
     ..aOS(2, _omitFieldNames ? '' : 'authToken')
     ..aOS(3, _omitFieldNames ? '' : 'userId')
     ..aOS(4, _omitFieldNames ? '' : 'message')
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   AuthResponse clone() => AuthResponse()..mergeFromMessage(this);
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  AuthResponse copyWith(void Function(AuthResponse) updates) => super.copyWith((message) => updates(message as AuthResponse)) as AuthResponse;
+  AuthResponse copyWith(void Function(AuthResponse) updates) =>
+      super.copyWith((message) => updates(message as AuthResponse))
+          as AuthResponse;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -346,9 +406,11 @@ class AuthResponse extends $pb.GeneratedMessage {
   static AuthResponse create() => AuthResponse._();
   @$core.override
   AuthResponse createEmptyInstance() => create();
-  static $pb.PbList<AuthResponse> createRepeated() => $pb.PbList<AuthResponse>();
+  static $pb.PbList<AuthResponse> createRepeated() =>
+      $pb.PbList<AuthResponse>();
   @$core.pragma('dart2js:noInline')
-  static AuthResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AuthResponse>(create);
+  static AuthResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<AuthResponse>(create);
   static AuthResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -388,6 +450,7 @@ class AuthResponse extends $pb.GeneratedMessage {
   void clearMessage() => $_clearField(4);
 }
 
-
-const $core.bool _omitFieldNames = $core.bool.fromEnvironment('protobuf.omit_field_names');
-const $core.bool _omitMessageNames = $core.bool.fromEnvironment('protobuf.omit_message_names');
+const $core.bool _omitFieldNames =
+    $core.bool.fromEnvironment('protobuf.omit_field_names');
+const $core.bool _omitMessageNames =
+    $core.bool.fromEnvironment('protobuf.omit_message_names');

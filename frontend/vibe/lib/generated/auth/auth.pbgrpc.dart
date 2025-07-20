@@ -32,32 +32,44 @@ class AuthServiceClient extends $grpc.Client {
 
   AuthServiceClient(super.channel, {super.options, super.interceptors});
 
-  $grpc.ResponseFuture<$0.SendCodeResponse> sendVerificationCode($0.PhoneNumberRequest request, {$grpc.CallOptions? options,}) {
+  $grpc.ResponseFuture<$0.SendCodeResponse> sendVerificationCode(
+    $0.PhoneNumberRequest request, {
+    $grpc.CallOptions? options,
+  }) {
     return $createUnaryCall(_$sendVerificationCode, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.AuthResponse> verifyCode($0.VerifyCodeRequest request, {$grpc.CallOptions? options,}) {
+  $grpc.ResponseFuture<$0.AuthResponse> verifyCode(
+    $0.VerifyCodeRequest request, {
+    $grpc.CallOptions? options,
+  }) {
     return $createUnaryCall(_$verifyCode, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.ValidateTokenRespone> validateToken($0.ValidateTokenRequest request, {$grpc.CallOptions? options,}) {
+  $grpc.ResponseFuture<$0.ValidateTokenRespone> validateToken(
+    $0.ValidateTokenRequest request, {
+    $grpc.CallOptions? options,
+  }) {
     return $createUnaryCall(_$validateToken, request, options: options);
   }
 
-    // method descriptors
+  // method descriptors
 
-  static final _$sendVerificationCode = $grpc.ClientMethod<$0.PhoneNumberRequest, $0.SendCodeResponse>(
-      '/auth.AuthService/SendVerificationCode',
-      ($0.PhoneNumberRequest value) => value.writeToBuffer(),
-      $0.SendCodeResponse.fromBuffer);
-  static final _$verifyCode = $grpc.ClientMethod<$0.VerifyCodeRequest, $0.AuthResponse>(
-      '/auth.AuthService/VerifyCode',
-      ($0.VerifyCodeRequest value) => value.writeToBuffer(),
-      $0.AuthResponse.fromBuffer);
-  static final _$validateToken = $grpc.ClientMethod<$0.ValidateTokenRequest, $0.ValidateTokenRespone>(
-      '/auth.AuthService/ValidateToken',
-      ($0.ValidateTokenRequest value) => value.writeToBuffer(),
-      $0.ValidateTokenRespone.fromBuffer);
+  static final _$sendVerificationCode =
+      $grpc.ClientMethod<$0.PhoneNumberRequest, $0.SendCodeResponse>(
+          '/auth.AuthService/SendVerificationCode',
+          ($0.PhoneNumberRequest value) => value.writeToBuffer(),
+          $0.SendCodeResponse.fromBuffer);
+  static final _$verifyCode =
+      $grpc.ClientMethod<$0.VerifyCodeRequest, $0.AuthResponse>(
+          '/auth.AuthService/VerifyCode',
+          ($0.VerifyCodeRequest value) => value.writeToBuffer(),
+          $0.AuthResponse.fromBuffer);
+  static final _$validateToken =
+      $grpc.ClientMethod<$0.ValidateTokenRequest, $0.ValidateTokenRespone>(
+          '/auth.AuthService/ValidateToken',
+          ($0.ValidateTokenRequest value) => value.writeToBuffer(),
+          $0.ValidateTokenRespone.fromBuffer);
 }
 
 @$pb.GrpcServiceName('auth.AuthService')
@@ -70,7 +82,8 @@ abstract class AuthServiceBase extends $grpc.Service {
         sendVerificationCode_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $0.PhoneNumberRequest.fromBuffer(value),
+        ($core.List<$core.int> value) =>
+            $0.PhoneNumberRequest.fromBuffer(value),
         ($0.SendCodeResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.VerifyCodeRequest, $0.AuthResponse>(
         'VerifyCode',
@@ -79,31 +92,40 @@ abstract class AuthServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.VerifyCodeRequest.fromBuffer(value),
         ($0.AuthResponse value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$0.ValidateTokenRequest, $0.ValidateTokenRespone>(
-        'ValidateToken',
-        validateToken_Pre,
-        false,
-        false,
-        ($core.List<$core.int> value) => $0.ValidateTokenRequest.fromBuffer(value),
-        ($0.ValidateTokenRespone value) => value.writeToBuffer()));
+    $addMethod(
+        $grpc.ServiceMethod<$0.ValidateTokenRequest, $0.ValidateTokenRespone>(
+            'ValidateToken',
+            validateToken_Pre,
+            false,
+            false,
+            ($core.List<$core.int> value) =>
+                $0.ValidateTokenRequest.fromBuffer(value),
+            ($0.ValidateTokenRespone value) => value.writeToBuffer()));
   }
 
-  $async.Future<$0.SendCodeResponse> sendVerificationCode_Pre($grpc.ServiceCall $call, $async.Future<$0.PhoneNumberRequest> $request) async {
+  $async.Future<$0.SendCodeResponse> sendVerificationCode_Pre(
+      $grpc.ServiceCall $call,
+      $async.Future<$0.PhoneNumberRequest> $request) async {
     return sendVerificationCode($call, await $request);
   }
 
-  $async.Future<$0.SendCodeResponse> sendVerificationCode($grpc.ServiceCall call, $0.PhoneNumberRequest request);
+  $async.Future<$0.SendCodeResponse> sendVerificationCode(
+      $grpc.ServiceCall call, $0.PhoneNumberRequest request);
 
-  $async.Future<$0.AuthResponse> verifyCode_Pre($grpc.ServiceCall $call, $async.Future<$0.VerifyCodeRequest> $request) async {
+  $async.Future<$0.AuthResponse> verifyCode_Pre($grpc.ServiceCall $call,
+      $async.Future<$0.VerifyCodeRequest> $request) async {
     return verifyCode($call, await $request);
   }
 
-  $async.Future<$0.AuthResponse> verifyCode($grpc.ServiceCall call, $0.VerifyCodeRequest request);
+  $async.Future<$0.AuthResponse> verifyCode(
+      $grpc.ServiceCall call, $0.VerifyCodeRequest request);
 
-  $async.Future<$0.ValidateTokenRespone> validateToken_Pre($grpc.ServiceCall $call, $async.Future<$0.ValidateTokenRequest> $request) async {
+  $async.Future<$0.ValidateTokenRespone> validateToken_Pre(
+      $grpc.ServiceCall $call,
+      $async.Future<$0.ValidateTokenRequest> $request) async {
     return validateToken($call, await $request);
   }
 
-  $async.Future<$0.ValidateTokenRespone> validateToken($grpc.ServiceCall call, $0.ValidateTokenRequest request);
-
+  $async.Future<$0.ValidateTokenRespone> validateToken(
+      $grpc.ServiceCall call, $0.ValidateTokenRequest request);
 }

@@ -1,0 +1,1 @@
+migrate -database "postgres://chat_user:chat_pass@localhost:5432/vibe_chat?sslmode=disable" -path . up

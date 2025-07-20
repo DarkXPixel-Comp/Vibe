@@ -23,8 +23,8 @@ const UserId$json = {
 };
 
 /// Descriptor for `UserId`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List userIdDescriptor = $convert.base64Decode(
-    'CgZVc2VySWQSDgoCaWQYASABKAlSAmlk');
+final $typed_data.Uint8List userIdDescriptor =
+    $convert.base64Decode('CgZVc2VySWQSDgoCaWQYASABKAlSAmlk');
 
 @$core.Deprecated('Use timestampDescriptor instead')
 const Timestamp$json = {
@@ -35,6 +35,5 @@ const Timestamp$json = {
 };
 
 /// Descriptor for `Timestamp`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List timestampDescriptor = $convert.base64Decode(
-    'CglUaW1lc3RhbXASEgoEdW5peBgBIAEoA1IEdW5peA==');
-
+final $typed_data.Uint8List timestampDescriptor =
+    $convert.base64Decode('CglUaW1lc3RhbXASEgoEdW5peBgBIAEoA1IEdW5peA==');

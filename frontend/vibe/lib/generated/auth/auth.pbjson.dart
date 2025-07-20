@@ -66,8 +66,9 @@ const ValidateTokenRequest$json = {
 };
 
 /// Descriptor for `ValidateTokenRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List validateTokenRequestDescriptor = $convert.base64Decode(
-    'ChRWYWxpZGF0ZVRva2VuUmVxdWVzdBIUCgV0b2tlbhgBIAEoCVIFdG9rZW4=');
+final $typed_data.Uint8List validateTokenRequestDescriptor =
+    $convert.base64Decode(
+        'ChRWYWxpZGF0ZVRva2VuUmVxdWVzdBIUCgV0b2tlbhgBIAEoCVIFdG9rZW4=');
 
 @$core.Deprecated('Use validateTokenResponeDescriptor instead')
 const ValidateTokenRespone$json = {
@@ -99,4 +100,3 @@ final $typed_data.Uint8List authResponseDescriptor = $convert.base64Decode(
     'CgxBdXRoUmVzcG9uc2USGAoHc3VjY2VzcxgBIAEoCFIHc3VjY2VzcxIdCgphdXRoX3Rva2VuGA'
     'IgASgJUglhdXRoVG9rZW4SFwoHdXNlcl9pZBgDIAEoCVIGdXNlcklkEhgKB21lc3NhZ2UYBCAB'
     'KAlSB21lc3NhZ2U=');
-

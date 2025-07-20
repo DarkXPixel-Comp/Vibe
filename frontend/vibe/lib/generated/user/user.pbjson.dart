@@ -23,8 +23,9 @@ const GetUserByPhoneRequest$json = {
 };
 
 /// Descriptor for `GetUserByPhoneRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getUserByPhoneRequestDescriptor = $convert.base64Decode(
-    'ChVHZXRVc2VyQnlQaG9uZVJlcXVlc3QSFAoFcGhvbmUYASABKAlSBXBob25l');
+final $typed_data.Uint8List getUserByPhoneRequestDescriptor =
+    $convert.base64Decode(
+        'ChVHZXRVc2VyQnlQaG9uZVJlcXVlc3QSFAoFcGhvbmUYASABKAlSBXBob25l');
 
 @$core.Deprecated('Use userResponseDescriptor instead')
 const UserResponse$json = {
@@ -49,8 +50,9 @@ const GetOrCreateUserRequest$json = {
 };
 
 /// Descriptor for `GetOrCreateUserRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getOrCreateUserRequestDescriptor = $convert.base64Decode(
-    'ChZHZXRPckNyZWF0ZVVzZXJSZXF1ZXN0EhQKBXBob25lGAEgASgJUgVwaG9uZQ==');
+final $typed_data.Uint8List getOrCreateUserRequestDescriptor =
+    $convert.base64Decode(
+        'ChZHZXRPckNyZWF0ZVVzZXJSZXF1ZXN0EhQKBXBob25lGAEgASgJUgVwaG9uZQ==');
 
 @$core.Deprecated('Use userDescriptor instead')
 const User$json = {
@@ -69,4 +71,3 @@ final $typed_data.Uint8List userDescriptor = $convert.base64Decode(
     'CgRVc2VyEhcKB3VzZXJfaWQYASABKAlSBnVzZXJJZBIUCgVwaG9uZRgCIAEoCVIFcGhvbmUSGw'
     'oJdXNlcl9uYW1lGAMgASgJUgh1c2VyTmFtZRIdCgpjcmVhdGVkX2F0GAQgASgJUgljcmVhdGVk'
     'QXQSHQoKdXBkYXRlZF9hdBgFIAEoCVIJdXBkYXRlZEF0');
-

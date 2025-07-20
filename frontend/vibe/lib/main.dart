@@ -1,145 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:grpc/grpc.dart';
+import 'package:grpc/grpc_connection_interface.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibe/generated/auth/auth.pbgrpc.dart';
-import 'package:vibe/services/auth_client.dart';
+import 'package:vibe/providers.dart';
+import 'package:vibe/screens/login_screen.dart';
+import 'package:vibe/screens/welcome_screen.dart';
+import 'package:vibe/services/auth_service.dart';
+import 'package:vibe/theme/colors.dart';
+import 'package:vibe/theme/app_theme.dart';
+import 'package:flutter/cupertino.dart';
+import 'router.dart';
+import 'package:routemaster/routemaster.dart';
+import 'package:vibe/providers/theme_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-void main() {
-  final client = AuthClient();
-  runApp(MyApp(client: client.client));
 
-  // final channel = ClientChannel(
-  //     'localhost',
-  //     port: 50051,
-  //     options: const ChannelOptions(credentials: ChannelCredentials.insecure())
-  //   );
-
-  // final client = AuthServiceClient(channel);
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  runApp(ProviderScope(
+    overrides: [
+      sharedPreferencesProvider.overrideWithValue(prefs),
+    ],
+    child: MyApp(),
+  ));
 }
+
 
 class MyApp extends StatelessWidget {
-  final AuthServiceClient client;
-  const MyApp({super.key, required this.client});
-  
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Vibe Auth Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: LoginPage(client: client,),
-    );
-  }
-}
-
-class LoginPage extends StatefulWidget {
-  final AuthServiceClient client;
-  const LoginPage({super.key, required this.client});
-  
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
-  
-  final _formKey = GlobalKey<FormState>();
-  
-  bool _isLoading = false;
-  
-  void _login() async {
-    if (!_formKey.currentState!.validate()) return;
-    
-    setState(() {
-      _isLoading = true;
-    });
-    
-    final username = _usernameController.text.trim();
-    final password = _passwordController.text;
-    
-    try {
-      final request = LoginRequest()
-      ..username = username
-      ..password = password;
-
-      final respone = await widget.client.login(request);
-
-      setState(() {
-        _isLoading = false;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login succesful! Token: ${respone.token}')),);
-
-    } catch(e) {
-      setState(() {
-        _isLoading = false;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login failed: $e')),
-      );
-    }
-
-    // if (username == "test" && password == "1234") {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(content: Text('Login successful!')),
-    //   );
-    // } else {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(content: Text('Invalid credentials')),
-    //   );
-    // }
-  }
-  
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login to Vibe'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextFormField(
-                controller: _usernameController,
-                decoration: const InputDecoration(
-                  labelText: 'Username',
-                ),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Enter username' : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                ),
-                obscureText: true,
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Enter password' : null,
-              ),
-              const SizedBox(height: 32),
-              _isLoading
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: _login,
-                      child: const Text('Login'),
-                    ),
-            ],
+      return MaterialApp(
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
+          cardTheme: CardThemeData(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
           ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(12.0))
+            )
+          )
         ),
-      ),
-    );
+        initialRoute: '/login',
+        routes: {
+          '/login': (context) => LoginScreen(),
+          '/chats': (context) => Scaffold(
+            appBar: AppBar(title: Text('Chats'),),
+            body: Center(child: Text('Chats list (Development)'),),
+          )
+        },
+      );
   }
 }
