@@ -20,6 +20,130 @@ export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
 
 export 'chat.pbenum.dart';
 
+class DeleteChatRequest extends $pb.GeneratedMessage {
+  factory DeleteChatRequest({
+    $core.String? chatId,
+  }) {
+    final result = create();
+    if (chatId != null) result.chatId = chatId;
+    return result;
+  }
+
+  DeleteChatRequest._();
+
+  factory DeleteChatRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory DeleteChatRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'DeleteChatRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'chat'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'chatId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  DeleteChatRequest clone() => DeleteChatRequest()..mergeFromMessage(this);
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  DeleteChatRequest copyWith(void Function(DeleteChatRequest) updates) =>
+      super.copyWith((message) => updates(message as DeleteChatRequest))
+          as DeleteChatRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static DeleteChatRequest create() => DeleteChatRequest._();
+  @$core.override
+  DeleteChatRequest createEmptyInstance() => create();
+  static $pb.PbList<DeleteChatRequest> createRepeated() =>
+      $pb.PbList<DeleteChatRequest>();
+  @$core.pragma('dart2js:noInline')
+  static DeleteChatRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<DeleteChatRequest>(create);
+  static DeleteChatRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get chatId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set chatId($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasChatId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearChatId() => $_clearField(1);
+}
+
+class DeleteChatResponse extends $pb.GeneratedMessage {
+  factory DeleteChatResponse({
+    $core.bool? success,
+    $core.String? errorMessage,
+  }) {
+    final result = create();
+    if (success != null) result.success = success;
+    if (errorMessage != null) result.errorMessage = errorMessage;
+    return result;
+  }
+
+  DeleteChatResponse._();
+
+  factory DeleteChatResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory DeleteChatResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'DeleteChatResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'chat'),
+      createEmptyInstance: create)
+    ..aOB(1, _omitFieldNames ? '' : 'success')
+    ..aOS(2, _omitFieldNames ? '' : 'errorMessage')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  DeleteChatResponse clone() => DeleteChatResponse()..mergeFromMessage(this);
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  DeleteChatResponse copyWith(void Function(DeleteChatResponse) updates) =>
+      super.copyWith((message) => updates(message as DeleteChatResponse))
+          as DeleteChatResponse;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static DeleteChatResponse create() => DeleteChatResponse._();
+  @$core.override
+  DeleteChatResponse createEmptyInstance() => create();
+  static $pb.PbList<DeleteChatResponse> createRepeated() =>
+      $pb.PbList<DeleteChatResponse>();
+  @$core.pragma('dart2js:noInline')
+  static DeleteChatResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<DeleteChatResponse>(create);
+  static DeleteChatResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.bool get success => $_getBF(0);
+  @$pb.TagNumber(1)
+  set success($core.bool value) => $_setBool(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasSuccess() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSuccess() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get errorMessage => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set errorMessage($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasErrorMessage() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearErrorMessage() => $_clearField(2);
+}
+
 class CreateChatRequest extends $pb.GeneratedMessage {
   factory CreateChatRequest({
     ChatType? type,
@@ -386,11 +510,122 @@ class GetChatRequest extends $pb.GeneratedMessage {
   void clearChatId() => $_clearField(1);
 }
 
+class GetChatsRequest extends $pb.GeneratedMessage {
+  factory GetChatsRequest({
+    $core.String? userId,
+  }) {
+    final result = create();
+    if (userId != null) result.userId = userId;
+    return result;
+  }
+
+  GetChatsRequest._();
+
+  factory GetChatsRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetChatsRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetChatsRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'chat'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'userId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetChatsRequest clone() => GetChatsRequest()..mergeFromMessage(this);
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetChatsRequest copyWith(void Function(GetChatsRequest) updates) =>
+      super.copyWith((message) => updates(message as GetChatsRequest))
+          as GetChatsRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetChatsRequest create() => GetChatsRequest._();
+  @$core.override
+  GetChatsRequest createEmptyInstance() => create();
+  static $pb.PbList<GetChatsRequest> createRepeated() =>
+      $pb.PbList<GetChatsRequest>();
+  @$core.pragma('dart2js:noInline')
+  static GetChatsRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetChatsRequest>(create);
+  static GetChatsRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get userId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set userId($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasUserId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUserId() => $_clearField(1);
+}
+
+class GetChatsResponse extends $pb.GeneratedMessage {
+  factory GetChatsResponse({
+    $core.Iterable<Chat>? chats,
+  }) {
+    final result = create();
+    if (chats != null) result.chats.addAll(chats);
+    return result;
+  }
+
+  GetChatsResponse._();
+
+  factory GetChatsResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetChatsResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetChatsResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'chat'),
+      createEmptyInstance: create)
+    ..pc<Chat>(1, _omitFieldNames ? '' : 'chats', $pb.PbFieldType.PM,
+        subBuilder: Chat.create)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetChatsResponse clone() => GetChatsResponse()..mergeFromMessage(this);
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetChatsResponse copyWith(void Function(GetChatsResponse) updates) =>
+      super.copyWith((message) => updates(message as GetChatsResponse))
+          as GetChatsResponse;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetChatsResponse create() => GetChatsResponse._();
+  @$core.override
+  GetChatsResponse createEmptyInstance() => create();
+  static $pb.PbList<GetChatsResponse> createRepeated() =>
+      $pb.PbList<GetChatsResponse>();
+  @$core.pragma('dart2js:noInline')
+  static GetChatsResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetChatsResponse>(create);
+  static GetChatsResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $pb.PbList<Chat> get chats => $_getList(0);
+}
+
 class ChatResponse extends $pb.GeneratedMessage {
   factory ChatResponse({
+    $core.bool? success,
+    $core.String? errorMessage,
     Chat? chat,
   }) {
     final result = create();
+    if (success != null) result.success = success;
+    if (errorMessage != null) result.errorMessage = errorMessage;
     if (chat != null) result.chat = chat;
     return result;
   }
@@ -408,7 +643,9 @@ class ChatResponse extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'ChatResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'chat'),
       createEmptyInstance: create)
-    ..aOM<Chat>(1, _omitFieldNames ? '' : 'chat', subBuilder: Chat.create)
+    ..aOB(1, _omitFieldNames ? '' : 'success')
+    ..aOS(2, _omitFieldNames ? '' : 'errorMessage')
+    ..aOM<Chat>(3, _omitFieldNames ? '' : 'chat', subBuilder: Chat.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -433,15 +670,33 @@ class ChatResponse extends $pb.GeneratedMessage {
   static ChatResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  Chat get chat => $_getN(0);
+  $core.bool get success => $_getBF(0);
   @$pb.TagNumber(1)
-  set chat(Chat value) => $_setField(1, value);
+  set success($core.bool value) => $_setBool(0, value);
   @$pb.TagNumber(1)
-  $core.bool hasChat() => $_has(0);
+  $core.bool hasSuccess() => $_has(0);
   @$pb.TagNumber(1)
-  void clearChat() => $_clearField(1);
-  @$pb.TagNumber(1)
-  Chat ensureChat() => $_ensure(0);
+  void clearSuccess() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get errorMessage => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set errorMessage($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasErrorMessage() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearErrorMessage() => $_clearField(2);
+
+  @$pb.TagNumber(3)
+  Chat get chat => $_getN(2);
+  @$pb.TagNumber(3)
+  set chat(Chat value) => $_setField(3, value);
+  @$pb.TagNumber(3)
+  $core.bool hasChat() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearChat() => $_clearField(3);
+  @$pb.TagNumber(3)
+  Chat ensureChat() => $_ensure(2);
 }
 
 class ListUserChatsRequest extends $pb.GeneratedMessage {

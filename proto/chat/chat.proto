@@ -4,7 +4,6 @@ package chat;
 
 option go_package = "github.com/DarkXPixel/Vibe/proto/chat";
 
-//import "google/protobuf/timestamp.proto";
 
 
 service ChatService {
@@ -12,8 +11,17 @@ service ChatService {
   rpc AddUserToChat(AddUserToChatRequest) returns (AddUserToChatResponse);
   rpc GetChat(GetChatRequest) returns (ChatResponse);
   rpc ListUserChats(ListUserChatsRequest) returns (ListUserChatResponse);
+  rpc GetChats(GetChatsRequest) returns (GetChatsResponse);
 }
 
+message DeleteChatRequest {
+  string chat_id = 1;
+}
+
+message DeleteChatResponse {
+  bool success = 1;
+  string error_message = 2;
+}
 
 message CreateChatRequest {
   ChatType type = 1;
@@ -41,9 +49,18 @@ message AddUserToChatResponse {
 message GetChatRequest {
   string chat_id = 1;
 }
+message GetChatsRequest {
+  string user_id = 1;
+}
+
+message GetChatsResponse {
+  repeated Chat chats = 1;
+}
 
 message ChatResponse {
-  Chat chat = 1;
+  bool success = 1;
+  string error_message = 2;
+  Chat chat = 3;
 }
 
 message ListUserChatsRequest {

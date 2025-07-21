@@ -9,10 +9,11 @@ import (
 )
 
 type Config struct {
-	DB    DBConfig    `mapstructure:"database"`
-	GRPC  GRPCConfig  `mapstructure:"grpc"`
-	Redis RedisConfig `mapstructure:"redis"`
-	JWT   JWTConfig   `mapstructure:"JWT"`
+	DB          DBConfig          `mapstructure:"database"`
+	GRPC        GRPCConfig        `mapstructure:"grpc"`
+	Redis       RedisConfig       `mapstructure:"redis"`
+	JWT         JWTConfig         `mapstructure:"JWT"`
+	UserService UserServiceConfig `mapstructure:"user-service"`
 }
 
 func LoadConfig() (*Config, error) {

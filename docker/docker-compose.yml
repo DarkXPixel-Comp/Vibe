@@ -3,25 +3,28 @@ version: "3.9"
 services:
   auth-service:
     build:
-      context: ../services/auth-service
+      context: ../
+      dockerfile: ./services/auth-service/Dockerfile
     ports:
-      - "50051:50051"
-    env_file:
-      - ../services/auth-service/.env
+      - "50032:50032"
+    environment:
+      CONFIG_PATH: /app/config
+      APP_ENV: docker
     depends_on:
       - postgres-auth
-    volumes:
-      - ../migrations/auth-service:/app/migrations
-
-  envoy:
-    image: envoyproxy/envoy:tools-v1.34.1
-    container_name: envoy
+      - redis
+  user-service:
+    build:
+      context: ../
+      dockerfile: ./services/user-service/Dockerfile
     ports:
-      - "8080:8080"
-      - "8443:8443"
-    volumes:
-      - "./envoy.yaml:/etc/envoy/envoy.yaml:ro"
-    restart: unless-stopped
+      - "50033:50033"
+    environment:
+      CONFIG_PATH: /app/config
+      APP_ENV: docker
+    depends_on:
+      - postgres-auth
+      - redis
   postgres-auth:
     image: postgres:16
     container_name: vibe-auth-postgres

@@ -50,7 +50,7 @@ func initApp() (*App, error) {
 	}
 	//creds, err := credentials.NewClientTLSFromCert()
 
-	userClient, err := repository.NewUserClient("localhost:50033")
+	userClient, err := repository.NewUserClient(fmt.Sprintf("%s:%d", app.config.UserService.Host, app.config.UserService.Port))
 	if err != nil {
 		return nil, fmt.Errorf("error connect user-service:%w", err)
 	}

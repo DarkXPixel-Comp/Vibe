@@ -28,6 +28,32 @@ const ChatType$json = {
 final $typed_data.Uint8List chatTypeDescriptor = $convert.base64Decode(
     'CghDaGF0VHlwZRILCgdQUklWQVRFEAASCQoFR1JPVVAQARILCgdDSEFOTkVMEAI=');
 
+@$core.Deprecated('Use deleteChatRequestDescriptor instead')
+const DeleteChatRequest$json = {
+  '1': 'DeleteChatRequest',
+  '2': [
+    {'1': 'chat_id', '3': 1, '4': 1, '5': 9, '10': 'chatId'},
+  ],
+};
+
+/// Descriptor for `DeleteChatRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteChatRequestDescriptor = $convert.base64Decode(
+    'ChFEZWxldGVDaGF0UmVxdWVzdBIXCgdjaGF0X2lkGAEgASgJUgZjaGF0SWQ=');
+
+@$core.Deprecated('Use deleteChatResponseDescriptor instead')
+const DeleteChatResponse$json = {
+  '1': 'DeleteChatResponse',
+  '2': [
+    {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
+    {'1': 'error_message', '3': 2, '4': 1, '5': 9, '10': 'errorMessage'},
+  ],
+};
+
+/// Descriptor for `DeleteChatResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteChatResponseDescriptor = $convert.base64Decode(
+    'ChJEZWxldGVDaGF0UmVzcG9uc2USGAoHc3VjY2VzcxgBIAEoCFIHc3VjY2VzcxIjCg1lcnJvcl'
+    '9tZXNzYWdlGAIgASgJUgxlcnJvck1lc3NhZ2U=');
+
 @$core.Deprecated('Use createChatRequestDescriptor instead')
 const CreateChatRequest$json = {
   '1': 'CreateChatRequest',
@@ -101,17 +127,44 @@ const GetChatRequest$json = {
 final $typed_data.Uint8List getChatRequestDescriptor = $convert
     .base64Decode('Cg5HZXRDaGF0UmVxdWVzdBIXCgdjaGF0X2lkGAEgASgJUgZjaGF0SWQ=');
 
+@$core.Deprecated('Use getChatsRequestDescriptor instead')
+const GetChatsRequest$json = {
+  '1': 'GetChatsRequest',
+  '2': [
+    {'1': 'user_id', '3': 1, '4': 1, '5': 9, '10': 'userId'},
+  ],
+};
+
+/// Descriptor for `GetChatsRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getChatsRequestDescriptor = $convert
+    .base64Decode('Cg9HZXRDaGF0c1JlcXVlc3QSFwoHdXNlcl9pZBgBIAEoCVIGdXNlcklk');
+
+@$core.Deprecated('Use getChatsResponseDescriptor instead')
+const GetChatsResponse$json = {
+  '1': 'GetChatsResponse',
+  '2': [
+    {'1': 'chats', '3': 1, '4': 3, '5': 11, '6': '.chat.Chat', '10': 'chats'},
+  ],
+};
+
+/// Descriptor for `GetChatsResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getChatsResponseDescriptor = $convert.base64Decode(
+    'ChBHZXRDaGF0c1Jlc3BvbnNlEiAKBWNoYXRzGAEgAygLMgouY2hhdC5DaGF0UgVjaGF0cw==');
+
 @$core.Deprecated('Use chatResponseDescriptor instead')
 const ChatResponse$json = {
   '1': 'ChatResponse',
   '2': [
-    {'1': 'chat', '3': 1, '4': 1, '5': 11, '6': '.chat.Chat', '10': 'chat'},
+    {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
+    {'1': 'error_message', '3': 2, '4': 1, '5': 9, '10': 'errorMessage'},
+    {'1': 'chat', '3': 3, '4': 1, '5': 11, '6': '.chat.Chat', '10': 'chat'},
   ],
 };
 
 /// Descriptor for `ChatResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List chatResponseDescriptor = $convert.base64Decode(
-    'CgxDaGF0UmVzcG9uc2USHgoEY2hhdBgBIAEoCzIKLmNoYXQuQ2hhdFIEY2hhdA==');
+    'CgxDaGF0UmVzcG9uc2USGAoHc3VjY2VzcxgBIAEoCFIHc3VjY2VzcxIjCg1lcnJvcl9tZXNzYW'
+    'dlGAIgASgJUgxlcnJvck1lc3NhZ2USHgoEY2hhdBgDIAEoCzIKLmNoYXQuQ2hhdFIEY2hhdA==');
 
 @$core.Deprecated('Use listUserChatsRequestDescriptor instead')
 const ListUserChatsRequest$json = {

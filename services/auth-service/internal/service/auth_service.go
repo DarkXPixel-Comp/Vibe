@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/DarkXPixel/Vibe/services/auth-service/internal/config"
@@ -53,7 +54,7 @@ func (s *authService) SendCode(ctx context.Context, phone string) (string, error
 		return "", fmt.Errorf("error generate auth token: %w", err)
 	}
 	err = s.redisRep.Set(ctx, token, code, time.Minute*5)
-	print(code)
+	log.Println(code) //<- temp
 	if err != nil {
 		return "", fmt.Errorf("error save token: %w", err)
 	}

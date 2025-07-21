@@ -60,6 +60,13 @@ class ChatServiceClient extends $grpc.Client {
     return $createUnaryCall(_$listUserChats, request, options: options);
   }
 
+  $grpc.ResponseFuture<$0.GetChatsResponse> getChats(
+    $0.GetChatsRequest request, {
+    $grpc.CallOptions? options,
+  }) {
+    return $createUnaryCall(_$getChats, request, options: options);
+  }
+
   // method descriptors
 
   static final _$createChat =
@@ -82,6 +89,11 @@ class ChatServiceClient extends $grpc.Client {
           '/chat.ChatService/ListUserChats',
           ($0.ListUserChatsRequest value) => value.writeToBuffer(),
           $0.ListUserChatResponse.fromBuffer);
+  static final _$getChats =
+      $grpc.ClientMethod<$0.GetChatsRequest, $0.GetChatsResponse>(
+          '/chat.ChatService/GetChats',
+          ($0.GetChatsRequest value) => value.writeToBuffer(),
+          $0.GetChatsResponse.fromBuffer);
 }
 
 @$pb.GrpcServiceName('chat.ChatService')
@@ -121,6 +133,13 @@ abstract class ChatServiceBase extends $grpc.Service {
             ($core.List<$core.int> value) =>
                 $0.ListUserChatsRequest.fromBuffer(value),
             ($0.ListUserChatResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.GetChatsRequest, $0.GetChatsResponse>(
+        'GetChats',
+        getChats_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $0.GetChatsRequest.fromBuffer(value),
+        ($0.GetChatsResponse value) => value.writeToBuffer()));
   }
 
   $async.Future<$0.CreateChatResponse> createChat_Pre($grpc.ServiceCall $call,
@@ -156,4 +175,12 @@ abstract class ChatServiceBase extends $grpc.Service {
 
   $async.Future<$0.ListUserChatResponse> listUserChats(
       $grpc.ServiceCall call, $0.ListUserChatsRequest request);
+
+  $async.Future<$0.GetChatsResponse> getChats_Pre($grpc.ServiceCall $call,
+      $async.Future<$0.GetChatsRequest> $request) async {
+    return getChats($call, await $request);
+  }
+
+  $async.Future<$0.GetChatsResponse> getChats(
+      $grpc.ServiceCall call, $0.GetChatsRequest request);
 }

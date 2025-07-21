@@ -26,18 +26,13 @@ RUN protoc \
   proto/chat/chat.proto proto/user/user.proto proto/auth/auth.proto proto/common/types.proto
 
 
-WORKDIR /app/services/auth-service
+WORKDIR /app/services/user-service
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o auth-service ./cmd/main.go
-
-# FROM golang:1.24.4 AS debugger
-# RUN go install github.com/go-delve/cmd/dlv@latest
-# COPY --from=builder /app/services/auth-service /debug_app/auth-service
-# COPY --from=builder /app/services/auth-service/config/docker.yaml /debug_app/config/docker.yaml
-# ENTRYPOINT ["dlv", "exec", "/debug_app/auth-service", "--listen=:40000", "--headless=true", "--api-version=2", "--accept-multiclient"]
+#RUN go build -o auth-service ./cmd/main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o user-service ./cmd/main.go
 
 FROM gcr.io/distroless/static:nonroot
-COPY --from=builder /app/services/auth-service/auth-service /app/auth-service
-COPY --from=builder /app/services/auth-service/config/docker.yaml /app/config/docker.yaml 
+COPY --from=builder /app/services/user-service/user-service /app/user-service
+COPY --from=builder /app/services/user-service/config/docker.yaml /app/config/docker.yaml 
 
-ENTRYPOINT ["/app/auth-service"]
+ENTRYPOINT ["/app/user-service"]
