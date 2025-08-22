@@ -13,6 +13,7 @@ import (
 type ChatRepository interface {
 	CreateChat(ctx context.Context, chat *model.Chat) (*model.Chat, error)
 	AddUserChat(ctx context.Context, chatID string, userID string, role string) error
+	GetChats(ctx context.Context, userId string) ([]model.Chat, error)
 }
 
 func CreateChatRepository(postgresql *pgxpool.Pool) ChatRepository {
@@ -24,14 +25,12 @@ type chatRepository struct {
 }
 
 func (r *chatRepository) CreateChat(ctx context.Context, chat *model.Chat) (*model.Chat, error) {
-	// Валидация типа чата
 	validTypes := []string{"private", "group", "channel"}
 	if int(chat.Type) > len(validTypes) {
 		return nil, fmt.Errorf("error type")
 	}
 	ctype := validTypes[chat.Type]
 
-	// Начало транзакции
 	tx, err := r.postgres.Begin(ctx)
 	if err != nil {
 		return nil, err
@@ -40,12 +39,12 @@ func (r *chatRepository) CreateChat(ctx context.Context, chat *model.Chat) (*mod
 
 	// Вставка чата
 	query := `
-        INSERT INTO chats (type, title, creator_id, created_at, updated_at)
-        VALUES ($1, $2, $3, $4, $4)
+        INSERT INTO chats (type, title, creator_id)
+        VALUES ($1, $2, $3)
         RETURNING id, created_at, updated_at
     `
-	now := time.Now()
-	err = tx.QueryRow(ctx, query, ctype, chat.Title, chat.CreatorID, now).
+
+	err = tx.QueryRow(ctx, query, ctype, chat.Title, chat.CreatorID).
 		Scan(&chat.ID, &chat.CreatedAt, &chat.UpdatedAt)
 	if err != nil {
 		return nil, err
@@ -107,9 +106,56 @@ func (r *chatRepository) addUserChatTx(ctx context.Context, tx pgx.Tx, chatID st
         RETURNING joined_at
     `
 	var joinedAt time.Time
-	err := tx.QueryRow(ctx, query, chatID, userID, role, "active", time.Now()).Scan(&joinedAt)
+	err := tx.QueryRow(ctx, query, chatID, userID, role, "active").Scan(&joinedAt)
 	if err == pgx.ErrNoRows {
 		return nil
 	}
 	return err
+}
+
+func (r *chatRepository) GetChats(ctx context.Context, userId string) ([]model.Chat, error) {
+	query := `
+		SELECT 
+		c.id,
+		c.type,
+		c.title,
+		c.creator_id,
+		c.created_at,
+		c.updated_at,
+		ARRAY_AGG(cu2.user_id) AS user_ids,
+		COUNT(cu2.user_id) AS member_count
+		FROM chat_users cu
+		JOIN chats c ON cu.chat_id = c.id
+		JOIN chat_users cu2 ON cu2.chat_id = c.id AND cu2.status = 'active'
+		WHERE cu.user_id = $1 AND cu.status = 'active'
+		GROUP BY c.id;
+	`
+	rows, err := r.postgres.Query(ctx, query, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var chats []model.Chat
+	for rows.Next() {
+		var chat model.Chat
+		var ctype string
+		err := rows.Scan(
+			&chat.ID,
+			&ctype,
+			&chat.Title,
+			&chat.CreatorID,
+			&chat.CreatedAt,
+			&chat.UpdatedAt,
+			&chat.UserIds,
+			&chat.MemberCount,
+		)
+		if err != nil {
+			return nil, err
+		}
+		validTypes := map[string]int{"private": 0, "group": 1, "channel": 2}
+		chat.Type = model.ChatType(validTypes[ctype])
+		chats = append(chats, chat)
+	}
+
+	return chats, nil
 }

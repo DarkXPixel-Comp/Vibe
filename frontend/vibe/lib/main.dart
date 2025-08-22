@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibe/providers.dart';
+import 'package:vibe/screens/chats_screen.dart';
 import 'package:vibe/screens/login_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -40,10 +41,11 @@ class MyApp extends StatelessWidget {
        home: AuthCheckScreen(),
         routes: {
           '/login': (context) => LoginScreen(),
-          '/chats': (context) => Scaffold(
-            appBar: AppBar(title: Text('Chats'),),
-            body: Center(child: Text('Chats list (Development)'),),
-          )
+          '/chats': (context) => ChatsScreen()
+          // '/chats': (context) => Scaffold(
+          //   appBar: AppBar(title: Text('Chats'),),
+          //   body: Center(child: Text('Chats list (Development)'),),
+          // )
         },
         debugShowCheckedModeBanner: false,
       );

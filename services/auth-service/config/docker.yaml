@@ -16,6 +16,9 @@ redis:
   host: "redis"
   port: "6379"
   password: "password"
+loki:
+  host: "http://loki"
+  port: 3100
 
 JWT:
   secret: "008b057678d1f6cbc8ddced4b387b92334006894686164d1de8efe957c74ed88"

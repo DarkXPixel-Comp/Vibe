@@ -1,0 +1,18 @@
+kafka:
+  brokers: ["kafka:9092"]
+  consumer_group: "realtime_gateway"
+  topics:
+    messages: "messages"
+    notify: "notify"
+    messages_events: "mesage_events"
+redis:
+  host: "redis"
+  port: "6379"
+  password: "password"
+
+chat-service:
+  host: "chat-service"
+  port: 50034
+websocket:
+  port: 8081
+  

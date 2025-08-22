@@ -16,8 +16,10 @@ type ChatHandler struct {
 	chatService service.ChatService
 }
 
-func NewChatHandler() *ChatHandler {
-	return &ChatHandler{}
+func NewChatHandler(chatService service.ChatService) *ChatHandler {
+	return &ChatHandler{
+		chatService: chatService,
+	}
 }
 
 func (h *ChatHandler) CreateChat(ctx context.Context, req *protoChat.CreateChatRequest) (*protoChat.CreateChatResponse, error) {
@@ -45,5 +47,35 @@ func (h *ChatHandler) CreateChat(ctx context.Context, req *protoChat.CreateChatR
 			UserIds:     chat.UserIds,
 			MemberCount: chat.MemberCount,
 		},
+	}, nil
+}
+
+func (h *ChatHandler) GetChats(ctx context.Context, req *protoChat.GetChatsRequest) (*protoChat.GetChatsResponse, error) {
+	if req.GetUserId() != ctx.Value("user_id") {
+		return nil, status.Error(codes.PermissionDenied, "you can get chats only for you")
+	}
+
+	chats, err := h.chatService.GetChats(ctx, req.GetUserId())
+
+	if err != nil {
+		return nil, status.Error(codes.NotFound, "error get chats")
+	}
+
+	var protoChats []*protoChat.Chat
+	for _, chat := range chats {
+		protoChats = append(protoChats, &protoChat.Chat{
+			Id:          chat.ID,
+			Type:        protoChat.ChatType(chat.Type),
+			Title:       chat.Title,
+			CreatorId:   chat.CreatorID,
+			CreatedAt:   chat.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:   chat.UpdatedAt.Format(time.RFC3339),
+			UserIds:     chat.UserIds,
+			MemberCount: chat.MemberCount,
+		})
+	}
+
+	return &protoChat.GetChatsResponse{
+		Chats: protoChats,
 	}, nil
 }

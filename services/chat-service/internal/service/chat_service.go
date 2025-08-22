@@ -14,14 +14,17 @@ import (
 
 type ChatService interface {
 	CreateChat(ctx context.Context, chatType model.ChatType, title string, creatorId string, userIds []string) (*model.Chat, error)
+	GetChats(ctx context.Context, user_id string) ([]model.Chat, error)
 }
 
 type chatService struct {
 	chatRepository repository.ChatRepository
 }
 
-func NewChatService() ChatService {
-	return &chatService{}
+func NewChatService(chatRepository repository.ChatRepository) ChatService {
+	return &chatService{
+		chatRepository: chatRepository,
+	}
 }
 
 func (c *chatService) CreateChat(ctx context.Context, chatType model.ChatType, title string, creatorId string, userIds []string,
@@ -50,4 +53,13 @@ func (c *chatService) CreateChat(ctx context.Context, chatType model.ChatType, t
 	}
 
 	return chat, nil
+}
+
+func (c *chatService) GetChats(ctx context.Context, user_id string) ([]model.Chat, error) {
+	chats, err := c.chatRepository.GetChats(ctx, user_id)
+	if err != nil {
+		return nil, fmt.Errorf("error get chats: %w", err)
+	}
+
+	return chats, nil
 }

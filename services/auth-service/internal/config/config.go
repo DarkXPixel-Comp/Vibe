@@ -14,6 +14,7 @@ type Config struct {
 	Redis       RedisConfig       `mapstructure:"redis"`
 	JWT         JWTConfig         `mapstructure:"JWT"`
 	UserService UserServiceConfig `mapstructure:"user-service"`
+	Loki        LokiConfig        `mapstructure:"loki"`
 }
 
 func LoadConfig() (*Config, error) {

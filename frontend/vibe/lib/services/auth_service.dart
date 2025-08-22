@@ -27,8 +27,8 @@ class AuthService {
       return response.success;
     } catch (e) {
       print('Error validation token: $e');
-      //await clearToken();
-      return true;
+      await clearToken();
+      return false;
     }
   }
 

@@ -46,7 +46,7 @@ func (r *userRepository) CreateUser(ctx context.Context, phone string) (*model.U
 
 	query := `
 		INSERT INTO users (phone, user_name)
-		VALUES ($1, $2)
+		VALUES ($1, NULLIF($2, ''))
 		RETURNING user_id, created_at, updated_at	
 	`
 	err := r.postgres.QueryRow(ctx, query, user.Phone, user.UserName).Scan(&user.UserID, &user.Created_at, &user.Updated_at)

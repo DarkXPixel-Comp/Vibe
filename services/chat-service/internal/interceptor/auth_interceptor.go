@@ -11,22 +11,23 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-
 type AuthInterceptor struct {
 	AuthClient protoAuth.AuthServiceClient
 }
 
-func NewAuthInterceptor(authClient protoAuth.AuthServiceClient) (*AuthInterceptor) {
-	return &AuthInterceptor{}
+func NewAuthInterceptor(authClient protoAuth.AuthServiceClient) *AuthInterceptor {
+	return &AuthInterceptor{
+		AuthClient: authClient,
+	}
 }
 
-func (i* AuthInterceptor) Unary() (grpc.UnaryServerInterceptor) {
+func (i *AuthInterceptor) Unary() grpc.UnaryServerInterceptor {
 	return func(
-        ctx context.Context,
-        req interface{},
-        info *grpc.UnaryServerInfo,
-        handler grpc.UnaryHandler,
-    ) (interface{}, error) {
+		ctx context.Context,
+		req interface{},
+		info *grpc.UnaryServerInfo,
+		handler grpc.UnaryHandler,
+	) (interface{}, error) {
 
 		md, ok := metadata.FromIncomingContext(ctx)
 		if ok == false {
@@ -48,7 +49,7 @@ func (i* AuthInterceptor) Unary() (grpc.UnaryServerInterceptor) {
 			return nil, status.Error(codes.Unauthenticated, "invalid or expired token")
 		}
 
-		ctx = context.WithValue(ctx, "user_id", authResp)
+		ctx = context.WithValue(ctx, "user_id", authResp.GetUserId())
 		return handler(ctx, req)
 	}
 }
