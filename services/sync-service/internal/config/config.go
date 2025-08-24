@@ -9,24 +9,20 @@ import (
 )
 
 type Config struct {
-	Postgres    PostgresConfig    `mapstructure:"postgres" validate:"required"`
-	GRPC        GRPCConfig        `mapstructure:"grpc" validate:"required"`
-	AuthService AuthServiceConfig `mapstructure:"auth-service" validate:"required"`
-	Redis       RedisConfig       `mapstructure:"redis" validate:"required"`
+	Postgres PostgresConfig `mapstructure:"postgres" validate:"required"`
+	GRPC     GRPCConfig     `mapstructure:"grpc" validate:"required"`
 }
 
 func LoadConfig() (*Config, error) {
 	godotenv.Load("../.env")
-
 	viper.AutomaticEnv()
 
 	configPath := viper.GetString("CONFIG_PATH")
 	if configPath == "" {
-		configPath = "./config	"
+		configPath = "./config"
 	}
 
 	appEnv := viper.GetString("APP_ENV")
-
 	if appEnv == "" {
 		appEnv = "local"
 	}
@@ -41,7 +37,7 @@ func LoadConfig() (*Config, error) {
 
 	var cfg Config
 	if err := viper.Unmarshal(&cfg); err != nil {
-		return nil, fmt.Errorf("error to decode into struct: %w", err)
+		return nil, fmt.Errorf("unable to decode into struct: %w", err)
 	}
 
 	validate := validator.New()
@@ -53,6 +49,5 @@ func LoadConfig() (*Config, error) {
 		}
 		return nil, fmt.Errorf("config validation failed: %w", err)
 	}
-
 	return &cfg, nil
 }

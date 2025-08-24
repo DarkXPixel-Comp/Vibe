@@ -21,27 +21,32 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type UserId struct {
+type Message struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ChatId        string                 `protobuf:"bytes,2,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
+	UserId        string                 `protobuf:"bytes,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Type          string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
+	Payload       string                 `protobuf:"bytes,5,opt,name=payload,proto3" json:"payload,omitempty"`
+	Timestamp     string                 `protobuf:"bytes,6,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserId) Reset() {
-	*x = UserId{}
+func (x *Message) Reset() {
+	*x = Message{}
 	mi := &file_common_types_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserId) String() string {
+func (x *Message) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserId) ProtoMessage() {}
+func (*Message) ProtoMessage() {}
 
-func (x *UserId) ProtoReflect() protoreflect.Message {
+func (x *Message) ProtoReflect() protoreflect.Message {
 	mi := &file_common_types_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -53,39 +58,75 @@ func (x *UserId) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserId.ProtoReflect.Descriptor instead.
-func (*UserId) Descriptor() ([]byte, []int) {
+// Deprecated: Use Message.ProtoReflect.Descriptor instead.
+func (*Message) Descriptor() ([]byte, []int) {
 	return file_common_types_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *UserId) GetId() string {
+func (x *Message) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-type Timestamp struct {
+func (x *Message) GetChatId() string {
+	if x != nil {
+		return x.ChatId
+	}
+	return ""
+}
+
+func (x *Message) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *Message) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *Message) GetPayload() string {
+	if x != nil {
+		return x.Payload
+	}
+	return ""
+}
+
+func (x *Message) GetTimestamp() string {
+	if x != nil {
+		return x.Timestamp
+	}
+	return ""
+}
+
+type ChatState struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Unix          int64                  `protobuf:"varint,1,opt,name=unix,proto3" json:"unix,omitempty"`
+	ChatId        string                 `protobuf:"bytes,1,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
+	Messages      []*Message             `protobuf:"bytes,2,rep,name=messages,proto3" json:"messages,omitempty"` //    repeated string deleted_message_ids = 3;
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Timestamp) Reset() {
-	*x = Timestamp{}
+func (x *ChatState) Reset() {
+	*x = ChatState{}
 	mi := &file_common_types_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Timestamp) String() string {
+func (x *ChatState) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Timestamp) ProtoMessage() {}
+func (*ChatState) ProtoMessage() {}
 
-func (x *Timestamp) ProtoReflect() protoreflect.Message {
+func (x *ChatState) ProtoReflect() protoreflect.Message {
 	mi := &file_common_types_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -97,27 +138,205 @@ func (x *Timestamp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Timestamp.ProtoReflect.Descriptor instead.
-func (*Timestamp) Descriptor() ([]byte, []int) {
+// Deprecated: Use ChatState.ProtoReflect.Descriptor instead.
+func (*ChatState) Descriptor() ([]byte, []int) {
 	return file_common_types_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Timestamp) GetUnix() int64 {
+func (x *ChatState) GetChatId() string {
 	if x != nil {
-		return x.Unix
+		return x.ChatId
+	}
+	return ""
+}
+
+func (x *ChatState) GetMessages() []*Message {
+	if x != nil {
+		return x.Messages
+	}
+	return nil
+}
+
+type Update struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Type          string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	Payload       string                 `protobuf:"bytes,4,opt,name=payload,proto3" json:"payload,omitempty"`
+	Pts           int64                  `protobuf:"varint,5,opt,name=pts,proto3" json:"pts,omitempty"`
+	UnorderedPts  int64                  `protobuf:"varint,6,opt,name=unordered_pts,json=unorderedPts,proto3" json:"unordered_pts,omitempty"`
+	Timestamp     string                 `protobuf:"bytes,7,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Update) Reset() {
+	*x = Update{}
+	mi := &file_common_types_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Update) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Update) ProtoMessage() {}
+
+func (x *Update) ProtoReflect() protoreflect.Message {
+	mi := &file_common_types_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Update.ProtoReflect.Descriptor instead.
+func (*Update) Descriptor() ([]byte, []int) {
+	return file_common_types_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Update) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Update) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *Update) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *Update) GetPayload() string {
+	if x != nil {
+		return x.Payload
+	}
+	return ""
+}
+
+func (x *Update) GetPts() int64 {
+	if x != nil {
+		return x.Pts
 	}
 	return 0
+}
+
+func (x *Update) GetUnorderedPts() int64 {
+	if x != nil {
+		return x.UnorderedPts
+	}
+	return 0
+}
+
+func (x *Update) GetTimestamp() string {
+	if x != nil {
+		return x.Timestamp
+	}
+	return ""
+}
+
+type ProfileState struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	AvatarUrl     string                 `protobuf:"bytes,3,opt,name=avatar_url,json=avatarUrl,proto3" json:"avatar_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProfileState) Reset() {
+	*x = ProfileState{}
+	mi := &file_common_types_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProfileState) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProfileState) ProtoMessage() {}
+
+func (x *ProfileState) ProtoReflect() protoreflect.Message {
+	mi := &file_common_types_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProfileState.ProtoReflect.Descriptor instead.
+func (*ProfileState) Descriptor() ([]byte, []int) {
+	return file_common_types_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ProfileState) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *ProfileState) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ProfileState) GetAvatarUrl() string {
+	if x != nil {
+		return x.AvatarUrl
+	}
+	return ""
 }
 
 var File_common_types_proto protoreflect.FileDescriptor
 
 const file_common_types_proto_rawDesc = "" +
 	"\n" +
-	"\x12common/types.proto\x12\x06common\"\x18\n" +
-	"\x06UserId\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\x1f\n" +
-	"\tTimestamp\x12\x12\n" +
-	"\x04unix\x18\x01 \x01(\x03R\x04unixB)Z'github.com/DarkXPixel/Vibe/proto/commonb\x06proto3"
+	"\x12common/types.proto\x12\x06common\"\x97\x01\n" +
+	"\aMessage\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\achat_id\x18\x02 \x01(\tR\x06chatId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\tR\x06userId\x12\x12\n" +
+	"\x04type\x18\x04 \x01(\tR\x04type\x12\x18\n" +
+	"\apayload\x18\x05 \x01(\tR\apayload\x12\x1c\n" +
+	"\ttimestamp\x18\x06 \x01(\tR\ttimestamp\"Q\n" +
+	"\tChatState\x12\x17\n" +
+	"\achat_id\x18\x01 \x01(\tR\x06chatId\x12+\n" +
+	"\bmessages\x18\x02 \x03(\v2\x0f.common.MessageR\bmessages\"\xb4\x01\n" +
+	"\x06Update\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
+	"\x04type\x18\x03 \x01(\tR\x04type\x12\x18\n" +
+	"\apayload\x18\x04 \x01(\tR\apayload\x12\x10\n" +
+	"\x03pts\x18\x05 \x01(\x03R\x03pts\x12#\n" +
+	"\runordered_pts\x18\x06 \x01(\x03R\funorderedPts\x12\x1c\n" +
+	"\ttimestamp\x18\a \x01(\tR\ttimestamp\"Z\n" +
+	"\fProfileState\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1d\n" +
+	"\n" +
+	"avatar_url\x18\x03 \x01(\tR\tavatarUrlB)Z'github.com/DarkXPixel/Vibe/proto/commonb\x06proto3"
 
 var (
 	file_common_types_proto_rawDescOnce sync.Once
@@ -131,17 +350,20 @@ func file_common_types_proto_rawDescGZIP() []byte {
 	return file_common_types_proto_rawDescData
 }
 
-var file_common_types_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_common_types_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_common_types_proto_goTypes = []any{
-	(*UserId)(nil),    // 0: common.UserId
-	(*Timestamp)(nil), // 1: common.Timestamp
+	(*Message)(nil),      // 0: common.Message
+	(*ChatState)(nil),    // 1: common.ChatState
+	(*Update)(nil),       // 2: common.Update
+	(*ProfileState)(nil), // 3: common.ProfileState
 }
 var file_common_types_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: common.ChatState.messages:type_name -> common.Message
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_common_types_proto_init() }
@@ -155,7 +377,7 @@ func file_common_types_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_common_types_proto_rawDesc), len(file_common_types_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

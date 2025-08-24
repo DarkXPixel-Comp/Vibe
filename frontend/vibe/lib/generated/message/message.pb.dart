@@ -19,11 +19,11 @@ export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
 
 class GetDifferenceRequest extends $pb.GeneratedMessage {
   factory GetDifferenceRequest({
-    $core.String? chatId,
+    $core.String? userId,
     $fixnum.Int64? pts,
   }) {
     final result = create();
-    if (chatId != null) result.chatId = chatId;
+    if (userId != null) result.userId = userId;
     if (pts != null) result.pts = pts;
     return result;
   }
@@ -41,7 +41,7 @@ class GetDifferenceRequest extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'GetDifferenceRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'message'),
       createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'chatId')
+    ..aOS(1, _omitFieldNames ? '' : 'userId')
     ..aInt64(2, _omitFieldNames ? '' : 'pts')
     ..hasRequiredFields = false;
 
@@ -68,13 +68,13 @@ class GetDifferenceRequest extends $pb.GeneratedMessage {
   static GetDifferenceRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get chatId => $_getSZ(0);
+  $core.String get userId => $_getSZ(0);
   @$pb.TagNumber(1)
-  set chatId($core.String value) => $_setString(0, value);
+  set userId($core.String value) => $_setString(0, value);
   @$pb.TagNumber(1)
-  $core.bool hasChatId() => $_has(0);
+  $core.bool hasUserId() => $_has(0);
   @$pb.TagNumber(1)
-  void clearChatId() => $_clearField(1);
+  void clearUserId() => $_clearField(1);
 
   @$pb.TagNumber(2)
   $fixnum.Int64 get pts => $_getI64(1);
@@ -88,17 +88,12 @@ class GetDifferenceRequest extends $pb.GeneratedMessage {
 
 class GetDifferenceResponse extends $pb.GeneratedMessage {
   factory GetDifferenceResponse({
-    $core.Iterable<Message>? messages,
-    $core.Iterable<$core.String>? deletedMessageIds,
     $fixnum.Int64? newPts,
-    $core.bool? success,
+    $core.Iterable<ChatState>? states,
   }) {
     final result = create();
-    if (messages != null) result.messages.addAll(messages);
-    if (deletedMessageIds != null)
-      result.deletedMessageIds.addAll(deletedMessageIds);
     if (newPts != null) result.newPts = newPts;
-    if (success != null) result.success = success;
+    if (states != null) result.states.addAll(states);
     return result;
   }
 
@@ -115,11 +110,9 @@ class GetDifferenceResponse extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'GetDifferenceResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'message'),
       createEmptyInstance: create)
-    ..pc<Message>(1, _omitFieldNames ? '' : 'messages', $pb.PbFieldType.PM,
-        subBuilder: Message.create)
-    ..pPS(2, _omitFieldNames ? '' : 'deletedMessageIds')
-    ..aInt64(3, _omitFieldNames ? '' : 'newPts')
-    ..aOB(4, _omitFieldNames ? '' : 'success')
+    ..aInt64(1, _omitFieldNames ? '' : 'newPts')
+    ..pc<ChatState>(2, _omitFieldNames ? '' : 'states', $pb.PbFieldType.PM,
+        subBuilder: ChatState.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -146,28 +139,16 @@ class GetDifferenceResponse extends $pb.GeneratedMessage {
   static GetDifferenceResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $pb.PbList<Message> get messages => $_getList(0);
+  $fixnum.Int64 get newPts => $_getI64(0);
+  @$pb.TagNumber(1)
+  set newPts($fixnum.Int64 value) => $_setInt64(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasNewPts() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearNewPts() => $_clearField(1);
 
   @$pb.TagNumber(2)
-  $pb.PbList<$core.String> get deletedMessageIds => $_getList(1);
-
-  @$pb.TagNumber(3)
-  $fixnum.Int64 get newPts => $_getI64(2);
-  @$pb.TagNumber(3)
-  set newPts($fixnum.Int64 value) => $_setInt64(2, value);
-  @$pb.TagNumber(3)
-  $core.bool hasNewPts() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearNewPts() => $_clearField(3);
-
-  @$pb.TagNumber(4)
-  $core.bool get success => $_getBF(3);
-  @$pb.TagNumber(4)
-  set success($core.bool value) => $_setBool(3, value);
-  @$pb.TagNumber(4)
-  $core.bool hasSuccess() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearSuccess() => $_clearField(4);
+  $pb.PbList<ChatState> get states => $_getList(1);
 }
 
 class DeleteMessageRequest extends $pb.GeneratedMessage {
@@ -440,19 +421,133 @@ class ListMessageResponse extends $pb.GeneratedMessage {
   void clearSuccess() => $_clearField(2);
 }
 
+class GetStateRequest extends $pb.GeneratedMessage {
+  factory GetStateRequest({
+    $core.String? userId,
+  }) {
+    final result = create();
+    if (userId != null) result.userId = userId;
+    return result;
+  }
+
+  GetStateRequest._();
+
+  factory GetStateRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetStateRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetStateRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'message'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'userId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetStateRequest clone() => GetStateRequest()..mergeFromMessage(this);
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetStateRequest copyWith(void Function(GetStateRequest) updates) =>
+      super.copyWith((message) => updates(message as GetStateRequest))
+          as GetStateRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetStateRequest create() => GetStateRequest._();
+  @$core.override
+  GetStateRequest createEmptyInstance() => create();
+  static $pb.PbList<GetStateRequest> createRepeated() =>
+      $pb.PbList<GetStateRequest>();
+  @$core.pragma('dart2js:noInline')
+  static GetStateRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetStateRequest>(create);
+  static GetStateRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get userId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set userId($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasUserId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUserId() => $_clearField(1);
+}
+
+class GetStateResponse extends $pb.GeneratedMessage {
+  factory GetStateResponse({
+    $fixnum.Int64? pts,
+  }) {
+    final result = create();
+    if (pts != null) result.pts = pts;
+    return result;
+  }
+
+  GetStateResponse._();
+
+  factory GetStateResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetStateResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetStateResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'message'),
+      createEmptyInstance: create)
+    ..aInt64(1, _omitFieldNames ? '' : 'pts')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetStateResponse clone() => GetStateResponse()..mergeFromMessage(this);
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetStateResponse copyWith(void Function(GetStateResponse) updates) =>
+      super.copyWith((message) => updates(message as GetStateResponse))
+          as GetStateResponse;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetStateResponse create() => GetStateResponse._();
+  @$core.override
+  GetStateResponse createEmptyInstance() => create();
+  static $pb.PbList<GetStateResponse> createRepeated() =>
+      $pb.PbList<GetStateResponse>();
+  @$core.pragma('dart2js:noInline')
+  static GetStateResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetStateResponse>(create);
+  static GetStateResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $fixnum.Int64 get pts => $_getI64(0);
+  @$pb.TagNumber(1)
+  set pts($fixnum.Int64 value) => $_setInt64(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasPts() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearPts() => $_clearField(1);
+}
+
 class Message extends $pb.GeneratedMessage {
   factory Message({
     $core.String? id,
     $core.String? chatId,
     $core.String? userId,
-    $core.String? content,
+    $core.String? type,
+    $core.String? payload,
     $core.String? timestamp,
   }) {
     final result = create();
     if (id != null) result.id = id;
     if (chatId != null) result.chatId = chatId;
     if (userId != null) result.userId = userId;
-    if (content != null) result.content = content;
+    if (type != null) result.type = type;
+    if (payload != null) result.payload = payload;
     if (timestamp != null) result.timestamp = timestamp;
     return result;
   }
@@ -473,8 +568,9 @@ class Message extends $pb.GeneratedMessage {
     ..aOS(1, _omitFieldNames ? '' : 'id')
     ..aOS(2, _omitFieldNames ? '' : 'chatId')
     ..aOS(3, _omitFieldNames ? '' : 'userId')
-    ..aOS(4, _omitFieldNames ? '' : 'content')
-    ..aOS(5, _omitFieldNames ? '' : 'timestamp')
+    ..aOS(4, _omitFieldNames ? '' : 'type')
+    ..aOS(5, _omitFieldNames ? '' : 'payload')
+    ..aOS(6, _omitFieldNames ? '' : 'timestamp')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -524,13 +620,192 @@ class Message extends $pb.GeneratedMessage {
   void clearUserId() => $_clearField(3);
 
   @$pb.TagNumber(4)
-  $core.String get content => $_getSZ(3);
+  $core.String get type => $_getSZ(3);
   @$pb.TagNumber(4)
-  set content($core.String value) => $_setString(3, value);
+  set type($core.String value) => $_setString(3, value);
   @$pb.TagNumber(4)
-  $core.bool hasContent() => $_has(3);
+  $core.bool hasType() => $_has(3);
   @$pb.TagNumber(4)
-  void clearContent() => $_clearField(4);
+  void clearType() => $_clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.String get payload => $_getSZ(4);
+  @$pb.TagNumber(5)
+  set payload($core.String value) => $_setString(4, value);
+  @$pb.TagNumber(5)
+  $core.bool hasPayload() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearPayload() => $_clearField(5);
+
+  @$pb.TagNumber(6)
+  $core.String get timestamp => $_getSZ(5);
+  @$pb.TagNumber(6)
+  set timestamp($core.String value) => $_setString(5, value);
+  @$pb.TagNumber(6)
+  $core.bool hasTimestamp() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearTimestamp() => $_clearField(6);
+}
+
+class ChatState extends $pb.GeneratedMessage {
+  factory ChatState({
+    $core.String? chatId,
+    $core.Iterable<Message>? messages,
+    $core.Iterable<$core.String>? deletedMessageIds,
+  }) {
+    final result = create();
+    if (chatId != null) result.chatId = chatId;
+    if (messages != null) result.messages.addAll(messages);
+    if (deletedMessageIds != null)
+      result.deletedMessageIds.addAll(deletedMessageIds);
+    return result;
+  }
+
+  ChatState._();
+
+  factory ChatState.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory ChatState.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'ChatState',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'message'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'chatId')
+    ..pc<Message>(3, _omitFieldNames ? '' : 'messages', $pb.PbFieldType.PM,
+        subBuilder: Message.create)
+    ..pPS(4, _omitFieldNames ? '' : 'deletedMessageIds')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ChatState clone() => ChatState()..mergeFromMessage(this);
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ChatState copyWith(void Function(ChatState) updates) =>
+      super.copyWith((message) => updates(message as ChatState)) as ChatState;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ChatState create() => ChatState._();
+  @$core.override
+  ChatState createEmptyInstance() => create();
+  static $pb.PbList<ChatState> createRepeated() => $pb.PbList<ChatState>();
+  @$core.pragma('dart2js:noInline')
+  static ChatState getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ChatState>(create);
+  static ChatState? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get chatId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set chatId($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasChatId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearChatId() => $_clearField(1);
+
+  @$pb.TagNumber(3)
+  $pb.PbList<Message> get messages => $_getList(1);
+
+  @$pb.TagNumber(4)
+  $pb.PbList<$core.String> get deletedMessageIds => $_getList(2);
+}
+
+class CallEvent extends $pb.GeneratedMessage {
+  factory CallEvent({
+    $core.String? callId,
+    $core.String? chatId,
+    $core.String? initiatorId,
+    $core.String? eventType,
+    $core.String? timestamp,
+  }) {
+    final result = create();
+    if (callId != null) result.callId = callId;
+    if (chatId != null) result.chatId = chatId;
+    if (initiatorId != null) result.initiatorId = initiatorId;
+    if (eventType != null) result.eventType = eventType;
+    if (timestamp != null) result.timestamp = timestamp;
+    return result;
+  }
+
+  CallEvent._();
+
+  factory CallEvent.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory CallEvent.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'CallEvent',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'message'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'callId')
+    ..aOS(2, _omitFieldNames ? '' : 'chatId')
+    ..aOS(3, _omitFieldNames ? '' : 'initiatorId')
+    ..aOS(4, _omitFieldNames ? '' : 'eventType')
+    ..aOS(5, _omitFieldNames ? '' : 'timestamp')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  CallEvent clone() => CallEvent()..mergeFromMessage(this);
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  CallEvent copyWith(void Function(CallEvent) updates) =>
+      super.copyWith((message) => updates(message as CallEvent)) as CallEvent;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static CallEvent create() => CallEvent._();
+  @$core.override
+  CallEvent createEmptyInstance() => create();
+  static $pb.PbList<CallEvent> createRepeated() => $pb.PbList<CallEvent>();
+  @$core.pragma('dart2js:noInline')
+  static CallEvent getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CallEvent>(create);
+  static CallEvent? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get callId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set callId($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasCallId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearCallId() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get chatId => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set chatId($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasChatId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearChatId() => $_clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get initiatorId => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set initiatorId($core.String value) => $_setString(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasInitiatorId() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearInitiatorId() => $_clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get eventType => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set eventType($core.String value) => $_setString(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasEventType() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearEventType() => $_clearField(4);
 
   @$pb.TagNumber(5)
   $core.String get timestamp => $_getSZ(4);

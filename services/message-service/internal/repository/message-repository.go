@@ -10,6 +10,9 @@ import (
 )
 
 type MessageRepository interface {
+	GetState(ctx context.Context, userID string) (int64, error)
+	GetDiffernce(ctx context.Context, userID string, clientPts int64) (int64, []model.ChatState, error)
+	ListMessages(ctx context.Context, chatID string, limit int32, lastMessageID string) ([]model.Message, error)
 }
 
 type messageRepository struct {
@@ -114,9 +117,95 @@ func (r *messageRepository) ListMessages(ctx context.Context, chatID string, lim
 	if err != nil {
 		return nil, fmt.Errorf("failed to list messages: %w", err)
 	}
-
 	defer rows.Close()
-	return nil, nil
+
+	var messages []model.Message
+	for rows.Next() {
+		var msg model.Message
+		if err := rows.Scan(&msg.ID, &msg.ChatID, &msg.UserID, &msg.Type, &msg.Payload, &msg.Timestamp); err != nil {
+			return nil, fmt.Errorf("failed to scan message: %w", err)
+		}
+		messages = append(messages, msg)
+	}
+
+	return messages, nil
+}
+
+func (r *messageRepository) DeleteMessage(ctx context.Context, chatID, messageID, userID string) (int64, error) {
+	tx, err := r.postgresql.Begin(ctx)
+	if err != nil {
+		return 0, fmt.Errorf("failed to start transaction: %w", err)
+	}
+	defer tx.Rollback(ctx)
+
+	var currentPts int64
+	err = tx.QueryRow(ctx, "SELECT pts FROM user_pts FROM user_pts WHERE user_id = $1 FOR UPDATE", userID).Scan(&currentPts)
+	if err == pgx.ErrNoRows {
+		currentPts = 0
+	} else if err != nil {
+		return 0, fmt.Errorf("failed to get pts: %w", err)
+	}
+
+	currentPts++
+	_, err = tx.Exec(ctx, `
+		UPDATE messages
+		SET deleted_at = NOW(), pts = $1
+		WHERE id = $2 AND chat_id = $3 AND deleted_at IS NULL
+	`, currentPts, messageID, chatID)
+
+	if err != nil {
+		return 0, fmt.Errorf("failed to delete message: %w", err)
+	}
+
+	_, err = tx.Exec(ctx, `
+		INSERT INTO user_pts (user_id, pts) VALUES ($1, $2)
+		ON CONFLICT (user_id) DO UPDATE SET pts = $2
+	`, userID, currentPts)
+	if err != nil {
+		return 0, fmt.Errorf("failed to update user_pts", err)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return 0, fmt.Errorf("failed to commit transaction: %w", err)
+	}
+	return currentPts, nil
+}
+
+func (r *messageRepository) SaveMessage(ctx context.Context, msg model.Message) (int64, error) {
+	tx, err := r.postgresql.Begin(ctx)
+	if err != nil {
+		return 0, fmt.Errorf("failed to start transaction: %w", err)
+	}
+	defer tx.Rollback(ctx)
+
+	var currentPts int64
+	err = tx.QueryRow(ctx, "SELECT pts FROM user_pts WHERE user_id = $1 FOR UPDATE").Scan(&currentPts)
+	if err == pgx.ErrNoRows {
+		currentPts = 0
+	} else if err != nil {
+		return 0, fmt.Errorf("failed to get user_pts: %w", err)
+	}
+
+	currentPts++
+	_, err = tx.Exec(ctx, `
+		INSERT INTO messages (id, chat_id, user_id, type, payload, timestamp, pts)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
+	`, msg.ID, msg.ChatID, msg.UserID, msg.Type, msg.Payload, msg.Timestamp, currentPts)
+	if err != nil {
+		return 0, fmt.Errorf("failed to save message: %w", err)
+	}
+	_, err = tx.Exec(ctx, `
+		INSERT INTO user_pts (user_id, pts) VALUES ($1, $2)
+		ON CONFLICT (user_id) DO UPDATE SET pts = $2
+	`, msg.UserID, currentPts)
+	if err != nil {
+		return 0, fmt.Errorf("failed to update user_pts: %w", err)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return 0, fmt.Errorf("failed to commit transaction: %w", err)
+	}
+	return currentPts, nil
 }
 
 // func (r *messageRepository) ListMessages(ctx context.Context, chatID string, limit int32, lastMessageID string) ([]model.Message, error) {
