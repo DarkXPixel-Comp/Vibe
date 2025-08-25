@@ -17,6 +17,10 @@ type syncRepository struct {
 	postgresql *pgxpool.Pool
 }
 
+func NewSyncRepository(postgresql *pgxpool.Pool) SyncRepository {
+	return &syncRepository{postgresql: postgresql}
+}
+
 func (r *syncRepository) GetState(ctx context.Context, userID string) (model.UserSync, error) {
 	var state model.UserSync
 	err := r.postgresql.QueryRow(ctx, `
@@ -67,29 +71,58 @@ func (r *syncRepository) GetDiffernce(ctx context.Context, userID string, client
 	return currentState, updates, nil
 }
 
-func (r *syncRepository) GetSnapshot(ctx context.Context, userID string, limitPerChat int32) (model.UserSync, []model.ChatState, model.ProfileState, error) {
-	currentState, err := r.GetState(ctx, userID)
+func (r *syncRepository) SaveUpdate(ctx context.Context, update model.Update) (model.UserSync, string, error) {
+	tx, err := r.postgresql.Begin(ctx)
 	if err != nil {
-		return model.UserSync{}, nil, model.ProfileState{}, err
+		return model.UserSync{}, "", fmt.Errorf("failed to begin transaction: %w", err)
 	}
+	defer tx.Rollback(ctx)
 
-	rows, err := r.postgresql.Query(ctx, `
-		SELECT DISTINCT chat_id
-		FROM events
-		WHERE user_id = $1 AND type IN ('message', 'chat')
-	`, userID)
-	if err != nil {
-		return model.UserSync{}, nil, model.ProfileState{}, fmt.Errorf("failed to query chat IDs: %w", err)
-	}
-	defer rows.Close()
-
-	var chatIDs []string
-	for rows.Next() { // change to grpc call to chat_service
-		var chatID string
-		if err := rows.Scan(&chatID); err != nil {
-			return model.UserSync{}, nil, model.ProfileState{}, err
+	var newPts, newUnordoredPts int64
+	if update.Type == "profile" {
+		err = tx.QueryRow(ctx, `
+			SELECT COALESCE(MAX(unordored_pts), 0) + 1
+			FROM events
+			WHERE user_id = $1 AND type = 'profile'
+		`, update.UserID).Scan(&newUnordoredPts)
+		if err != nil {
+			return model.UserSync{}, "", fmt.Errorf("failed to get new unordored_pts: %w", err)
 		}
-		chatIDs = append(chatIDs, chatID)
+	} else {
+		err = tx.QueryRow(ctx, `
+			SELECT COALSCE(MAX(pts), 0) + 1
+			FROM events
+			WHERE user_id = $1 AND type != 'profile'
+		`, update.UserID).Scan(&newPts)
+		if err != nil {
+			return model.UserSync{}, "", fmt.Errorf("failed to get new pts: %w", err)
+		}
 	}
 
+	var generatedID string
+	err = tx.QueryRow(ctx, `
+		INSERT INTO events (user_id, type, payload, pts, unordored_pts, timestamp)
+		VALUES ($1, $2, $3, $4, $5, $6)
+		RETURNING id
+	`, update.UserID, update.Type, update.Payload, newPts, newUnordoredPts, update.Timestamp).Scan(&generatedID)
+
+	if err != nil {
+		return model.UserSync{}, "", fmt.Errorf("failed to insert event")
+	}
+
+	_, err = tx.Exec(ctx, `
+		INSERT INTO user_sync (user_id, pts, unordored_pts)
+		VALUES ($1, $2, $3)
+		ON CONFLICT (user_id)
+		DO UPDATE SET pts = GREATEST(user_sync.pts, $2), unordored_pts = GREATEST(user_sync.unordored_pts, $3)
+	`, update.UserID, newPts, newUnordoredPts)
+	if err != nil {
+		return model.UserSync{}, "", fmt.Errorf("failed to update user_sync: %w", err)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return model.UserSync{}, "", fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	return model.UserSync{UserID: update.UserID, Pts: newPts, UnordoredPts: newUnordoredPts}, generatedID, nil
 }

@@ -8,15 +8,14 @@ message Message {
     string id = 1;
     string chat_id = 2;
     string user_id = 3;
-    string type = 4;
-    string payload = 5;
+    string type = 4; //text, call, audio, video, file
+    string payload = 5; // JSON-encoded data
     string timestamp = 6;
 }
 
 message ChatState {
     string chat_id = 1;
     repeated Message messages = 2;
-//    repeated string deleted_message_ids = 3;
 }
 message Update {
     string id = 1;

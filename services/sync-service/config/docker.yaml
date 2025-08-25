@@ -1,0 +1,14 @@
+postgresql:
+  host: "postgres-auth"
+  port: 5432
+  user: "sync_user"
+  password: "sync_pass"
+  dbname: "vibe_sync"
+  sslmode: "disable"
+grpc:
+  port: 50036
+  timeout: 60s
+
+auth-service:
+  host: "auth-service"
+  port: 50032

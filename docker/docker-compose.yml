@@ -60,6 +60,21 @@ services:
       - postgres-auth
     networks:
       - vibe_network
+  sync-serivce:
+    build:
+      context: ../
+      dockerfile: ./services/sync-service/Dockerfile
+    ports:
+      - "50036:50036"
+    environment:
+      CONFIG_PATH: /app/config
+      APP_ENV: docker
+#      GOFLAGS: -tags=debug
+    depends_on:
+      - postgres-auth
+      - auth-service
+    networks:
+      - vibe_network
 
   postgres-auth:
     image: postgres:16

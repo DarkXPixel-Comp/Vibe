@@ -6,5 +6,6 @@ use (
 	./services/user-service
 	./services/chat-service
 	./services/message-service
+	./services/sync-service
 //	./services/realtime-gateway
 )

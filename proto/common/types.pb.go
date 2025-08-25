@@ -26,8 +26,8 @@ type Message struct {
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	ChatId        string                 `protobuf:"bytes,2,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
 	UserId        string                 `protobuf:"bytes,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Type          string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
-	Payload       string                 `protobuf:"bytes,5,opt,name=payload,proto3" json:"payload,omitempty"`
+	Type          string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`       //text, call, audio, video, file
+	Payload       string                 `protobuf:"bytes,5,opt,name=payload,proto3" json:"payload,omitempty"` // JSON-encoded data
 	Timestamp     string                 `protobuf:"bytes,6,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -108,7 +108,7 @@ func (x *Message) GetTimestamp() string {
 type ChatState struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ChatId        string                 `protobuf:"bytes,1,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
-	Messages      []*Message             `protobuf:"bytes,2,rep,name=messages,proto3" json:"messages,omitempty"` //    repeated string deleted_message_ids = 3;
+	Messages      []*Message             `protobuf:"bytes,2,rep,name=messages,proto3" json:"messages,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

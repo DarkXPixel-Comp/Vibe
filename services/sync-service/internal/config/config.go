@@ -9,8 +9,9 @@ import (
 )
 
 type Config struct {
-	Postgres PostgresConfig `mapstructure:"postgres" validate:"required"`
-	GRPC     GRPCConfig     `mapstructure:"grpc" validate:"required"`
+	Postgres    PostgresConfig    `mapstructure:"postgresql" validate:"required"`
+	GRPC        GRPCConfig        `mapstructure:"grpc" validate:"required"`
+	AuthService AuthServiceConfig `mapstructure:"auth-service" validate:"required"`
 }
 
 func LoadConfig() (*Config, error) {

@@ -33,7 +33,7 @@ func (h *UserHandler) GetOrCreateUser(ctx context.Context, req *protoUser.GetOrC
 	if err != nil {
 		return &protoUser.UserResponse{
 			Success: false,
-		}, status.Errorf(codes.Internal, "%w", err)
+		}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &protoUser.UserResponse{

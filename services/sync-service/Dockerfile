@@ -30,13 +30,20 @@ RUN protoc \
   proto/chat/chat.proto proto/user/user.proto proto/auth/auth.proto proto/common/types.proto proto/message/message.proto proto/sync/sync.proto
 
 
-WORKDIR /app/services/user-service
 
-#RUN go build -o auth-service ./cmd/main.go
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o user-service ./cmd/main.go
+WORKDIR /app/services/sync-service
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o sync-service ./cmd/main.go
+
+FROM golang:1.24.4 AS debugger
+#ENV GOPROXY=https://proxy.golang.org,direct
+RUN go install github.com/go-delve/delve/cmd/dlv@latest
+COPY --from=builder /app/services/sync-service/sync-service /app/sync-service
+COPY --from=builder /app/services/sync-service/config/docker.yaml /app/config/docker.yaml 
+ENTRYPOINT ["dlv", "exec", "/app/sync-service", "--listen=:40000", "--headless=true", "--api-version=2", "--accept-multiclient"]
 
 FROM gcr.io/distroless/static:nonroot
-COPY --from=builder /app/services/user-service/user-service /app/user-service
-COPY --from=builder /app/services/user-service/config/docker.yaml /app/config/docker.yaml 
+COPY --from=builder /app/services/sync-service/sync-service /app/sync-service
+COPY --from=builder /app/services/sync-service/config/docker.yaml /app/config/docker.yaml 
 
-ENTRYPOINT ["/app/user-service"]
+ENTRYPOINT ["/app/sync-service"]

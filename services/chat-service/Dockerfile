@@ -12,6 +12,7 @@ COPY services/auth-service/go.mod services/auth-service/go.sum ./services/auth-s
 COPY services/user-service/go.mod services/user-service/go.sum ./services/user-service/
 COPY services/chat-service/go.mod services/chat-service/go.sum ./services/chat-service/
 COPY services/message-service/go.mod services/message-service/go.sum ./services/message-service/
+COPY services/sync-service/go.mod services/sync-service/go.sum ./services/sync-service/
 
 RUN go mod download -x
 
@@ -20,13 +21,13 @@ COPY services/auth-service ./services/auth-service
 COPY services/user-service ./services/user-service
 COPY services/chat-service ./services/chat-service
 COPY services/message-service ./services/message-service
+COPY services/sync-service ./services/sync-service
 
 RUN protoc \
   --proto_path=proto \
   --go_out=paths=source_relative:proto \
   --go-grpc_out=paths=source_relative:proto \
-  proto/chat/chat.proto proto/user/user.proto proto/auth/auth.proto proto/common/types.proto proto/message/message.proto
-
+  proto/chat/chat.proto proto/user/user.proto proto/auth/auth.proto proto/common/types.proto proto/message/message.proto proto/sync/sync.proto
 
 
 WORKDIR /app/services/chat-service

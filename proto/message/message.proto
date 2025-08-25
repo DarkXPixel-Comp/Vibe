@@ -4,21 +4,11 @@ package message;
 
 option go_package = "github.com/DarkXPixel/Vibe/proto/message";
 
+import "common/types.proto";
+
 service MessageService {
     rpc ListMessages(ListMessagesRequest) returns (ListMessageResponse);
-    rpc GetDifference(GetDifferenceRequest) returns (GetDifferenceResponse);
     rpc DeleteMessage(DeleteMessageRequest) returns (DeleteMessageResponse);
-    rpc GetState(GetStateRequest) returns (GetStateResponse);
-}
-
-message GetDifferenceRequest {
-    string user_id = 1;
-    int64 pts = 2;
-}
-
-message GetDifferenceResponse {
-    int64 new_pts = 1;
-    repeated ChatState states = 2;
 }
 
 message DeleteMessageRequest {
@@ -37,37 +27,6 @@ message ListMessagesRequest {
 }
 
 message ListMessageResponse {
-    repeated Message messages = 1;
+    repeated common.Message messages = 1;
     bool success = 2;
-}
-
-message GetStateRequest {
-    string user_id = 1;
-}
-
-message GetStateResponse {
-    int64 pts = 1;
-}
-
-message Message {
-    string id = 1;
-    string chat_id = 2;
-    string user_id = 3;
-    string type = 4; // text, call, audio, video, file
-    string payload = 5; // JSON-encoded data
-    string timestamp = 6;
-}
-
-message ChatState {
-    string chat_id = 1;
-    repeated Message messages = 3;
-    repeated string deleted_message_ids = 4;
-}
-
-message CallEvent {
-    string call_id = 1;
-    string chat_id = 2;
-    string initiator_id = 3;
-    string event_type = 4;
-    string timestamp = 5;
 }
