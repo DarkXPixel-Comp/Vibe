@@ -60,7 +60,7 @@ services:
       - postgres-auth
     networks:
       - vibe_network
-  sync-serivce:
+  sync-service:
     build:
       context: ../
       dockerfile: ./services/sync-service/Dockerfile
@@ -129,6 +129,7 @@ services:
       - auth-service
       - user-service
       - chat-service
+      - sync-service
     networks:
       - vibe_network
   loki:

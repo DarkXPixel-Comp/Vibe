@@ -1,0 +1,22 @@
+apiVersion: skaffold/v4beta6
+kind: Config
+metadata:
+  name: vibe
+build:
+  artifacts:
+  - image: auth-service
+    context: .
+    docker:
+      dockerfile: services/auth-service/Dockerfile
+  local:
+    push: false
+deploy:
+  helm:
+    releases:
+    - name: vibe
+      chartPath: helm/vibe
+      valuesFiles:
+      - helm/vibe/values-dev.yaml
+      namespace: default
+  # kubectl:
+  #   manifests:

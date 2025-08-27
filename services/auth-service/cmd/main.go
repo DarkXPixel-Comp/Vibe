@@ -17,6 +17,8 @@ import (
 	"github.com/DarkXPixel/Vibe/services/auth-service/internal/service"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"google.golang.org/grpc"
+
+	envoyauth "github.com/envoyproxy/go-control-plane/envoy/service/auth/v3"
 )
 
 type App struct {
@@ -63,6 +65,7 @@ func initApp() (*App, error) {
 
 	//auth.RegisterAuthServiceServer(app.grpcServer, app.authService)
 	auth.RegisterAuthServiceServer(app.grpcServer, app.handler)
+	envoyauth.RegisterAuthorizationServer(app.grpcServer, app.handler)
 
 	app.log = slog.New(slog.NewTextHandler(os.Stdout, nil))
 	slog.SetDefault(app.log)
