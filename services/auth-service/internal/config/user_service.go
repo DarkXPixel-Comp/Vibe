@@ -1,6 +1,6 @@
 package config
 
 type UserServiceConfig struct {
-	Port int    `mapstructure:"port" validate:"required"`
-	Host string `mapstructure:"host" validate:"required"`
+	Port string `env:"PORT" validate:"required"`
+	Host string `env:"HOST" validate:"required"`
 }

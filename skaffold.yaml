@@ -18,5 +18,3 @@ deploy:
       valuesFiles:
       - helm/vibe/values-dev.yaml
       namespace: default
-  # kubectl:
-  #   manifests:

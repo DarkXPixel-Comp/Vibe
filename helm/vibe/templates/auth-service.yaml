@@ -4,7 +4,7 @@ metadata:
   name: auth-service
   namespace: default
 spec:
-  replicas: {{ .Values.replicas }}
+  replicas: 0
   selector:
     matchLabels:
       app: auth-service
@@ -26,6 +26,16 @@ spec:
         env:
         - name: GRPC_PORT
           value: "{{ .Values.authService.port }}"
+        - name: USER_SERVICE_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: vibe-config
+              key: USER_SERVICE_HOST
+        - name: USER_SERVICE_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: vibe-config
+              key: USER_SERVICE_PORT
         - name: DATABASE_HOST
           valueFrom:
             configMapKeyRef:

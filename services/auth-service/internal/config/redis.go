@@ -1,7 +1,7 @@
 package config
 
 type RedisConfig struct {
-	Host     string `mapstructure:"host" validate:"required"`
-	Port     string `mapstructure:"port" validate:"required"`
-	Passowrd string `mapstructure:"password"`
+	Host     string `env:"HOST" validate:"required"`
+	Port     string `env:"PORT" validate:"required"`
+	Passowrd string `env:"PASSWORD"`
 }

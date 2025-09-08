@@ -3,54 +3,37 @@ package config
 import (
 	"fmt"
 
+	"github.com/caarlos0/env/v9"
 	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
-	"github.com/spf13/viper"
 )
 
 type Config struct {
-	DB          DBConfig          `mapstructure:"database"`
-	GRPC        GRPCConfig        `mapstructure:"grpc"`
-	Redis       RedisConfig       `mapstructure:"redis"`
-	JWT         JWTConfig         `mapstructure:"JWT"`
-	UserService UserServiceConfig `mapstructure:"user-service"`
-	Loki        LokiConfig        `mapstructure:"loki"`
+	DB          DBConfig          `envPrefix:"DATABASE_"`
+	GRPC        GRPCConfig        `envPrefix:"GRPC_"`
+	Redis       RedisConfig       `envPrefix:"REDIS_"`
+	JWT         JWTConfig         `envPrefix:"JWT_"`
+	UserService UserServiceConfig `envPrefix:"USER_SERVICE_"`
+	//Loki        LokiConfig        `mapstructure:"loki"`
 }
 
 func LoadConfig() (*Config, error) {
+	cfg := &Config{}
 	godotenv.Load("../.env")
-	viper.AutomaticEnv()
 
-	configPath := viper.GetString("CONFIG_PATH")
-	if configPath == "" {
-		configPath = "./config"
+	if err := env.Parse(cfg); err != nil {
+		return nil, fmt.Errorf("failed to parse env varriables: %w", err)
 	}
 
-	appEnv := viper.GetString("APP_ENV")
-	if appEnv == "" {
-		appEnv = "local"
-	}
-	viper.SetConfigName(appEnv)
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath(configPath)
-
-	if err := viper.ReadInConfig(); err != nil {
-		return nil, fmt.Errorf("error reading config file: %w", err)
-	}
-
-	var cfg Config
-	if err := viper.Unmarshal(&cfg); err != nil {
-		return nil, fmt.Errorf("unable to decode into struct: %w", err)
-	}
 	validate := validator.New()
-	if err := validate.Struct(&cfg); err != nil {
+	if err := validate.Struct(cfg); err != nil {
 		if validationErrors, ok := err.(validator.ValidationErrors); ok {
 			for _, fieldErr := range validationErrors {
-				fmt.Printf("Field validation error: Field '%s' failed on the '%s' tag\n", fieldErr.Field(), fieldErr.Tag())
+				fmt.Printf("field validation error: Field '%s' failed on the '%s' tag\n", fieldErr.Field(), fieldErr.Tag())
 			}
 		}
 		return nil, fmt.Errorf("config validation failed: %w", err)
 	}
 
-	return &cfg, nil
+	return cfg, nil
 }

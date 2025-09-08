@@ -1,0 +1,121 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: postgresql-migration-{{ .Release.Revision }}
+  namespace: default
+  labels:
+    app: postgresql-migration
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeded
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+
+      initContainers:
+        - name: prepare-init-sql
+          image: alpine:3.19
+          command:
+            - sh
+            - -c
+            - |
+              apk add --no-cache gettext
+              envsubst < /config/init-template.sql > /init/init.sql
+          env:
+          - name: POSTGRES_ADMIN_USER
+            valueFrom:
+              configMapKeyRef:
+                name: postgresql-config
+                key: POSTGRESQL_ADMIN_USER
+          - name: POSTGRES_ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-secrets
+                key: DB_PASSWORD
+
+          - name: AUTH_USER
+            valueFrom:
+              configMapKeyRef:
+                name: auth-service-config
+                key: DATABASE_USER
+            
+          - name: DB_AUTH
+            valueFrom:
+              configMapKeyRef:
+                name: auth-service-config
+                key: DATABASE_DBNAME
+      
+          - name: AUTH_USER_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: auth-service-secrets
+                key: POSTGRES_PASSWORD
+          volumeMounts:
+          - name: init-template-sql
+            mountPath: /config
+          - name: init-sql
+            mountPath: /init
+      containers:
+        - name: migration
+          image: {{ .Values.postgres.image }}
+          command:
+          - sh
+          - -c
+          - |
+            echo "Starting PostgreSQL migration..."
+            for i in $(seq 1 30); do
+                echo "Attempt $i: checking PostgreSQL..."
+                PGPASSWORD=$POSTGRES_ADMIN_PASSWORD pg_isready -h postgresql -p 5432 -U $POSTGRES_ADMIN_USER --timeout=5
+                if [ $? -eq 0 ]; then
+                  echo "PostgreSQL is ready!"
+                  echo "Executing init.sql..."
+                  PGPASSWORD=$POSTGRES_ADMIN_PASSWORD psql -h postgresql -p 5432 -U $POSTGRES_ADMIN_USER -d postgres -f /init/init.sql
+                  exit 0
+                fi
+                sleep 5
+              done
+            echo "Failed to connect PostgreSQL after 30 attempts"
+            exit 1
+          env:
+          - name: POSTGRES_ADMIN_USER
+            valueFrom:
+              configMapKeyRef:
+                name: postgresql-config
+                key: POSTGRESQL_ADMIN_USER
+          - name: POSTGRES_ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgresql-secrets
+                key: DB_PASSWORD
+
+          - name: AUTH_USER
+            valueFrom:
+              configMapKeyRef:
+                name: auth-service-config
+                key: DATABASE_USER
+            
+          - name: DB_AUTH
+            valueFrom:
+              configMapKeyRef:
+                name: auth-service-config
+                key: DATABASE_DBNAME
+      
+          - name: AUTH_USER_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: auth-service-secrets
+                key: POSTGRES_PASSWORD
+          volumeMounts:
+          - name: init-template-sql
+            mountPath: /config
+          - name: init-sql
+            mountPath: /init
+      volumes:
+        - name: init-template-sql
+          configMap:
+            name: postgresql-init-sql
+        - name: init-sql
+          emptyDir: {}
+
+            

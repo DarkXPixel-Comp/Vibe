@@ -11,3 +11,6 @@ data:
   REDIS_HOST: "{{ .Values.config.redis.host }}"
   REDIS_PORT: "{{ .Values.config.redis.port }}"
 
+  USER_SERVICE_HOST: "{{ .Values.userService.host }}"
+  USER_SERVICE_PORT: "{{ .Values.userService.port }}"
+

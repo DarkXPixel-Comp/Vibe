@@ -1,5 +1,6 @@
 replicas: 1
 imagePullPolicy: Never
+devSecretsEnabled: true
 resources:
   limits:
     cpu: "500m"
@@ -10,6 +11,11 @@ resources:
 authService:
   image: auth-service:latest
   port: 50032
+  host: auth-service
+userService:
+  image: user-service:latest
+  port: 50033
+  host: user-service
 envoy:
   image: envoyproxy/envoy:v1.35.0
   port: 8080
@@ -17,7 +23,6 @@ envoy:
 postgres:
   image: postgres:16
   port: 5432
-  passwordSecret: postgres-auth-secret
 
 config:
   redis:
@@ -31,3 +36,5 @@ config:
     database:
       user: "auth_user"
       dbname: "vibe_auth"
+  postgres:
+    adminUser: postgres

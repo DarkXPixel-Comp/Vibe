@@ -1,5 +1,5 @@
 package config
 
 type JWTConfig struct {
-	Secret string `mapstructure:"secret" validate:"required"`
+	Secret string `env:"SECRET" validate:"required"`
 }

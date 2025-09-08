@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgresql-config
+  namespace: default
+data:
+  POSTGRESQL_ADMIN_USER: "{{ .Values.config.postgres.adminUser }}"
