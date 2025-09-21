@@ -1,0 +1,35 @@
+# Основные параметры
+clusterName: ""        # имя Redis-кластера
+namespace: ""          # namespace, где будет создан
+instances: 1           # количество pod'ов Redis
+
+# Образ Redis
+imageName: quay.io/opstree/redis:v8.2.1
+
+# Хранилище
+storage:
+  size: 1Gi
+  storageClass: ""      # если пусто — возьмется по умолчанию
+
+# Аутентификация
+auth:
+  enabled: true
+  passwordSecret: ""    # имя секрета с паролем
+  password: ""          # можно задать напрямую (в dev), в prod — через секрет
+
+# Экспонирование сервиса
+expose:
+  leader:
+    enabled: false
+    type: LoadBalancer
+    port: 6379
+  follower:
+    enabled: false
+    type: NodePort
+    port: 30079
+    annotations: {}
+
+
+# Метрики
+metrics:
+  enabled: false        # true — включить Redis Exporter

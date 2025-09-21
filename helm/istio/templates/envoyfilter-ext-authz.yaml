@@ -1,0 +1,49 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: edge-ext-authz
+  namespace: {{ .Values.global.ingressNamespace }}
+spec:
+  workloadSelector:
+    labels:
+      istio: ingressgateway
+  configPatches:
+  - applyTo: HTTP_FILTER
+    match:
+      context: GATEWAY
+      listener:
+        filterChain:
+          filter:
+            name: envoy.filters.network.http_connection_manager
+    patch:
+      operation: INSERT_BEFORE
+      value:
+        name: envoy.filters.http.ext_authz
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
+          transport_api_version: V3
+          failure_mode_allow: false
+          clear_route_cache: true
+          with_request_body:
+            max_request_bytes: 8192
+            allow_partial_message: true
+          http_service:
+            server_uri:
+              # Можно указать path, но Envoy сам добавит :path исходного запроса; auth-сервис может игнорировать
+              uri: http://{{ .Values.authService.host }}:{{ .Values.authService.port }}{{ .Values.authService.introspect.path }}
+              cluster: outbound|{{ .Values.authService.port }}||{{ .Values.authService.host }}
+              timeout: {{ printf "%dms" .Values.authService.introspect.timeoutMs }}
+            authorization_request:
+              allowed_headers:
+                patterns:
+                - exact: authorization
+                - exact: x-request-id
+                - exact: :path          # gRPC метод (/pkg.Svc/Method), если полезно для аудита
+                - exact: :authority
+            authorization_response:
+              allowed_upstream_headers:
+                patterns:
+                - exact: x-user-id
+                - exact: x-user-roles
+          status_on_error:
+            code: 503

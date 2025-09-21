@@ -1,0 +1,6 @@
+apiVersion: v2
+name: istio
+description: Istio Ingress Gateway + Envoy ext_authz для gRPC
+type: application
+version: 0.1.0
+appVersion: "1.0"

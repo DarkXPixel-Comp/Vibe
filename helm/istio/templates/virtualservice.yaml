@@ -1,0 +1,40 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: edge-routes
+  namespace: {{ .Values.global.appNamespace }}
+spec:
+  hosts:
+  - {{ .Values.global.domain }}
+  gateways:
+  - {{ .Values.global.appNamespace }}/edge-gw
+  http:
+  # Публичные gRPC-методы: байпас авторизации
+  - name: public-grpc
+    match:
+{{- range .Values.routes.publicGrpc }}
+    - uri:
+        prefix: {{ . | quote }}
+{{- end }}
+    headers:
+      request:
+        remove:
+        - x-user-id
+        - x-user-roles
+    route:
+    - destination:
+        host: {{ .Values.authService.host }}
+        port:
+          number: {{ .Values.authService.port }}
+  # Всё остальное — защищённые gRPC-вызовы
+  - name: secure-grpc
+    headers:
+      request:
+        remove:
+        - x-user-id
+        - x-user-roles
+    route:
+    - destination:
+        host: {{ .Values.routes.secure.defaultUpstream.host }}
+        port:
+          number: {{ .Values.routes.secure.defaultUpstream.port }}

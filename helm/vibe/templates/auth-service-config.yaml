@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-service-config
+  namespace: default
+data:
+  DATABASE_USER: "{{ .Values.config.authService.database.user }}"
+  DATABASE_DBNAME: "{{ .Values.config.authService.database.dbname }}"

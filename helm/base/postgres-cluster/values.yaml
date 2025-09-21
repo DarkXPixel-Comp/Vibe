@@ -1,0 +1,28 @@
+clusterName: ""
+namespace: ""
+instances: 2
+imageName: ""     # опционально: если хочешь закрепить образ PG
+storage:
+  size: 2Gi
+  storageClass: ""  # если пусто — возьмется по умолчанию
+
+# Роли (минимум одна — владелец базы)
+roles:
+  - name: ""
+    passwordSecret: ""
+
+# Опциональное создание базы этим модулем
+database:
+  enabled: true
+  name: ""        # имя базы
+  owner: ""       # владелец (одна из roles.name)
+
+# Сетевые сервисы (для доступа pgAdmin и внешних клиентов)
+expose:
+  rw:
+    enabled: false
+    type: LoadBalancer   # или NodePort
+    port: 5432
+    annotations: {}      # опционально (например, для cloud LB)
+
+# Мониторинг, бэкапы — можно добавить по мере надобности

@@ -1,0 +1,47 @@
+replicas: 1
+imagePullPolicy: Never
+devSecretsEnabled: true
+resources:
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+  requests:
+    cpu: "100m"
+    memory: "256Mi"
+
+migrations:
+  image: vibe/vibe-migrations:2e9450ac5bffbcb3e8773593070496e48d70b077a198fed4e9efb2ff26d89481
+authService:
+  image: vibe/auth-service:latest
+  port: 50032
+  host: auth-service
+userService:
+  image: user-service:latest
+  port: 50033
+  host: user-service
+envoy:
+  image: envoyproxy/envoy:v1.35.0
+  port: 8080
+  adminPort: 9901
+postgres:
+  image: postgres:16
+  port: 5432
+
+services:
+  authService:
+
+
+config:
+  redis:
+    host: "redis"
+    port: "6379"
+  database:
+    host: "postgresql"
+    port: "5432"
+    sslmode: "disable"
+  authService:
+    database:
+      user: "auth_user"
+      dbname: "vibe_auth"
+  postgres:
+    adminUser: postgres

@@ -1,0 +1,22 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: edge-ext-authz-bypass-public
+  namespace: {{ .Values.global.appNamespace }}
+spec:
+  configPatches:
+  - applyTo: HTTP_ROUTE
+    match:
+      context: GATEWAY
+      routeConfiguration:
+        vhost:
+          name: {{ printf "%s:80" .Values.global.domain }}
+          route:
+            name: public-grpc
+    patch:
+      operation: MERGE
+      value:
+        typed_per_filter_config:
+          envoy.filters.http.ext_authz:
+            "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthzPerRoute
+            disabled: true

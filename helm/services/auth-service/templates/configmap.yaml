@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "auth-service.fullname" . }}-config
+  labels:
+    app: {{ include "auth-service.name" . }}
+data:
+  GRPC_PORT: {{ .Values.config.env.GRPC_PORT | quote }}
+  USER_SERVICE_HOST: {{ .Values.config.env.USER_SERVICE_HOST | quote }}
+  USER_SERVICE_PORT: {{ .Values.config.env.USER_SERVICE_PORT | quote }}
+  DATABASE_HOST: {{ .Values.config.env.DATABASE_HOST | quote }}
+  DATABASE_PORT: {{ .Values.config.env.DATABASE_PORT | quote }}
+  DATABASE_SSLMODE: {{ .Values.config.env.DATABASE_SSLMODE | quote }}
+  DATABASE_USER: {{ .Values.config.env.DATABASE_USER | quote }}
+  DATABASE_DBNAME: {{ .Values.config.env.DATABASE_DBNAME | quote }}
+  REDIS_HOST: {{ .Values.config.env.REDIS_HOST | quote }}
+  REDIS_PORT: {{ .Values.config.env.REDIS_PORT | quote }}

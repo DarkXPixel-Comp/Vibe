@@ -1,0 +1,51 @@
+# apiVersion: batch/v1
+# kind: Job
+# metadata:
+#   name: migrate-all-{{ .Release.Revision }}
+#   namespace: default
+#   labels:
+#     app: migrate-all
+#   annotations:
+#     "helm.sh/hook": post-install,post-upgrade
+#     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeded
+# spec:
+#   template:
+#     metadata:
+#       labels:
+#         app: migrate-all
+#     spec:
+#       restartPolicy: OnFailure
+#       containers:
+#         - name: migrate
+#           image: "{{ .Values.migrations.image }}"
+#           imagePullPolicy: {{ .Values.imagePullPolicy }}
+#           command: ["/bin/sh", "-c"]
+#           args:
+#             - |
+#               flyway -url=postgres://${AUTH_SERVICE_USER}:${AUTH_SERVICE_PASSWORD}@${POSTGRES_HOST}:5432/${AUTH_SERVICE_DB}?sslmode=${POSTGRES_SSLMODE} -locations=filesystem:/app/migrations/auth-service
+#           env:
+#             - name: AUTH_SERVICE_USER
+#               valueFrom:
+#                 configMapKeyRef:
+#                   name: auth-service-config
+#                   key: DATABASE_USER
+#             - name: AUTH_SERVICE_PASSWORD
+#               valueFrom:
+#                 secretKeyRef:
+#                   name: auth-service-secrets
+#                   key: POSTGRES_PASSWORD
+#             - name: POSTGRESQL_HOST
+#               valueFrom:
+#                 configMapKeyRef:
+#                   name: postgresql-config
+#                   key: POSTGRESQL_HOST
+#             - name: AUTH_SERVICE_DB
+#               valueFrom:
+#                 configMapKeyRef:
+#                   name: auth-service-config
+#                   key: DATABASE_DBNAME
+#             - name: POSTGRES_SSLMODE
+#               valueFrom:
+#                 configMapKeyRef:
+#                   name: postgresql-config
+#                   key: POSTGRESQL_SSLMODE

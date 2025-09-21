@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package sync;
+
+option go_package = "github.com/DarkXPixel/Vibe/proto/sync";
+
+import "common/types.proto";
+
+service SyncService {
+    rpc GetState(GetStateRequest) returns (GetStateResponse);
+}
+
+message GetStateRequest {
+    string user_id = 1;
+}
+
+message GetStateResponse {
+    int64 pts = 1;
+    int64 unordered_pts = 2;
+}
+
+message GetDifferenceRequest {
+    string user_id = 1;
+    int64 pts = 2;
+    int64 unordered_pts = 3;
+}
+
+message GetDifferenceResponse {
+    int64 new_pts = 1;
+    int64 new_unordered_pts = 2;
+    repeated common.Update updates = 3;
+}
+
+message GetSnapshotRequest {
+    string user_id = 1;
+    int32 limit_per_chat = 2;
+}
+
+message GetSnapshotResponse {
+    int64 new_pts = 1;
+    int64 new_unordered_pts = 2;
+    repeated common.ChatState chats = 3;
+    common.ProfileState profile = 4;
+}

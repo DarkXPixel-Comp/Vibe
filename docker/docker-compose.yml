@@ -1,0 +1,191 @@
+version: "3.9"
+
+services:
+  auth-service:
+    build:
+      context: ../
+      dockerfile: ./services/auth-service/Dockerfile
+    ports:
+      - "50032:50032"
+    environment:
+      CONFIG_PATH: /app/config
+      APP_ENV: docker
+    depends_on:
+      - postgres-auth
+      - redis
+    networks:
+      - vibe_network
+  user-service:
+    build:
+      context: ../
+      dockerfile: ./services/user-service/Dockerfile
+    ports:
+      - "50033:50033"
+    environment:
+      CONFIG_PATH: /app/config
+      APP_ENV: docker
+    depends_on:
+      - postgres-auth
+      - redis
+    networks:
+      - vibe_network
+  chat-service:
+    build:
+      context: ../
+      dockerfile: ./services/chat-service/Dockerfile
+ #     target: debugger
+    ports:
+      - "50034:50034"
+    environment:
+      CONFIG_PATH: /app/config
+      APP_ENV: docker
+      GOFLAGS: -tags=debug
+    depends_on:
+      - postgres-auth
+      - auth-service
+    networks:
+      - vibe_network
+  message-service:
+    build:
+      context: ../
+      dockerfile: ./services/message-service/Dockerfile
+ #     target: debugger
+    ports:
+      - "50035:50035"
+    environment:
+      CONFIG_PATH: /app/config
+      APP_ENV: docker
+      GOFLAGS: -tags=debug
+    depends_on:
+      - postgres-auth
+    networks:
+      - vibe_network
+  sync-service:
+    build:
+      context: ../
+      dockerfile: ./services/sync-service/Dockerfile
+    ports:
+      - "50036:50036"
+    environment:
+      CONFIG_PATH: /app/config
+      APP_ENV: docker
+#      GOFLAGS: -tags=debug
+    depends_on:
+      - postgres-auth
+      - auth-service
+    networks:
+      - vibe_network
+
+  postgres-auth:
+    image: postgres:16
+    container_name: vibe-auth-postgres
+    restart: unless-stopped
+    environment:
+      #POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    #  POSTGRES_DB: vibe_auth
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata-auth:/var/lib/postgresql/data
+      - ./postgres/custom-pg_hba.conf:/etc/postgresql/custom-pg_hba.conf
+      - ./postgres/custom-postgresql.conf:/etc/postgresql/custom-postgresql.conf
+      - ./init/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - vibe_network
+    command: [
+      "postgres",
+      "-c", "config_file=/etc/postgresql/custom-postgresql.conf"
+    ]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=password
+    volumes:
+      - redis_data:/data
+    networks:
+      - vibe_network
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+
+  envoy:
+    image: envoyproxy/envoy:v1.35.0
+    ports:
+      - "8080:8080"
+      - "9901:9901"
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+      - envoy_logs:/var/log/envoy
+    command: /usr/local/bin/envoy -c /etc/envoy/envoy.yaml
+    entrypoint: ["/bin/sh", "-c", "mkdir -p /var/log/envoy && /usr/local/bin/envoy -c /etc/envoy/envoy.yaml"]
+    depends_on:
+      - auth-service
+      - user-service
+      - chat-service
+      - sync-service
+    networks:
+      - vibe_network
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    networks:
+      - vibe_network
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    depends_on:
+      - loki
+    networks:
+      - vibe_network
+  fluentd:
+    image: fluent/fluentd:latest
+    volumes:
+      - ./fluentd.conf:/fluentd/etc/fluentd.conf
+      - envoy_logs:/var/log/envoy:ro
+    depends_on:
+      - loki
+    networks:
+      - vibe_network
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    environment:
+      CLUSTER_ID: "c3d4e5f6-7890-1234-5678-9abcdef01234"
+      KAFKA_CLUSTER_ID: "c3d4e5f6-7890-1234-5678-9abcdef01234"
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    networks:
+      - vibe_network
+
+volumes:
+  pgdata-auth:
+  redis_data:
+  envoy_logs:
+  zookeeper_data:
+  kafka_data:
+
+networks:
+  vibe_network:
+    driver: bridge

@@ -1,0 +1,64 @@
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisCluster
+metadata:
+  name: {{ .Values.clusterName }}
+  namespace: {{ .Values.namespace }}
+spec:
+  clusterSize: {{ .Values.instances }}
+  kubernetesConfig:
+    image: "{{ .Values.imageName | default "quay.io/opstree/redis:v8.2.1" }}"
+    imagePullPolicy: IfNotPresent
+  persistence:
+    enabled: true
+    size: {{ .Values.storage.size }}
+    {{- if .Values.storage.storageClass }}
+    storageClass: {{ .Values.storage.storageClass }}
+    {{- end }}
+  redisExporter:
+    enabled: {{ .Values.metrics.enabled }}
+    image: "{{ .Values.metrics.image | default "quay.io/opstree/redis-exporter:v1.76.0" }}"
+  security:
+    {{- if .Values.auth.enabled }}
+    enablePassword: true
+    secretName: {{ .Values.auth.passwordSecret | default (printf "%s-redis-secret" .Values.clusterName) }}
+    {{- else }}
+    enablePassword: false
+    {{- end }}
+  {{- if or (and .Values.expose.leader.enabled .Values.expose.leader.type) (and .Values.expose.follower.enabled .Values.expose.follower.type) }}
+  services:
+    additional:
+      {{- if and .Values.expose.leader.enabled .Values.expose.leader.type }}
+      - selectorType: leader
+        serviceTemplate:
+          metadata:
+            name: {{ printf "%s-leader-external" .Values.clusterName }}
+            {{- if .Values.expose.leader.annotations }}
+            annotations:
+              {{- toYaml .Values.expose.leader.annotations | nindent 14 }}
+            {{- end }}
+          spec:
+            type: {{ .Values.expose.leader.type }}
+            ports:
+              - name: redis
+                port: {{ .Values.expose.leader.port | default 6379 }}
+                targetPort: 6379
+      {{- end }}
+      {{- if and .Values.expose.follower.enabled .Values.expose.follower.type }}
+      - selectorType: follower
+        serviceTemplate:
+          metadata:
+            name: {{ printf "%s-follower-external" .Values.clusterName }}
+            {{- if .Values.expose.follower.annotations }}
+            annotations:
+              {{- toYaml .Values.expose.follower.annotations | nindent 14 }}
+            {{- end }}
+          spec:
+            type: {{ .Values.expose.follower.type }}
+            ports:
+              - name: redis
+                port: {{ .Values.expose.follower.port | default 6379 }}
+                targetPort: 6379
+      {{- end }}
+  {{- end }}
+
+

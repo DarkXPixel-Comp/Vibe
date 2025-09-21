@@ -1,0 +1,14 @@
+apiVersion: v2
+name: auth
+description: Auth microservice deployment
+type: application
+version: 0.1.0
+dependencies:
+  - name: postgres-cluster
+    version: 0.1.0
+    repository: "file://../../base/postgres-cluster"
+  - name: redis-cluster
+    version: 0.1.0
+    repository: "file://../../base/redis-cluster"
+
+  

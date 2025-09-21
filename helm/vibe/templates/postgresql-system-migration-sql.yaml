@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: system-migration-sql
+data:
+  init-template.sql: |
+    DO $$
+    BEGIN
+      CREATE ROLE ${AUTH_USER} LOGIN PASSWORD '${AUTH_USER_PASSWORD}';
+    EXCEPTION
+      WHEN duplicate_object THEN
+        RAISE NOTICE 'Role ${AUTH_USER} already exists, skipping...';
+    END
+    $$ LANGUAGE plpgsql;
+
+    CREATE DATABASE ${DB_AUTH} OWNER ${AUTH_USER};
+    GRANT ALL PRIVILEGES ON DATABASE ${DB_AUTH} TO ${AUTH_USER};
+    REVOKE ALL ON DATABASE ${DB_AUTH} FROM PUBLIC;

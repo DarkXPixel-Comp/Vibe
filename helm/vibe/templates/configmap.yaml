@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vibe-config
+  namespace: default
+data:
+  DATABASE_HOST: "{{ .Values.config.database.host }}"
+  DATABASE_PORT: "{{ .Values.config.database.port }}"
+  DATABASE_SSLMODE: "{{ .Values.config.database.sslmode | default "disable" }}"
+
+  REDIS_HOST: "{{ .Values.config.redis.host }}"
+  REDIS_PORT: "{{ .Values.config.redis.port }}"
+
+  USER_SERVICE_HOST: "{{ .Values.userService.host }}"
+  USER_SERVICE_PORT: "{{ .Values.userService.port }}"
+

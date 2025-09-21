@@ -1,0 +1,79 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: postgresql-system-migration-{{ .Release.Revision }}
+  namespace: default
+  labels:
+    app: postresql-system-migration
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+ #   "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+spec:
+ # ttlSecondsAfterFinished: 60
+  template:
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: wait-for-postgres
+          image: ghcr.io/cloudnative-pg/postgresql:16
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for PostgreSQL to be ready..."
+              until pg_isready -h postgresql-cluster-rw -p 5432 -U $POSTGRES_USER; do
+                echo "PostgreSQL is not ready yet, sleeping..."
+                sleep 3
+              done
+              echo "PostgreSQL is ready!"
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-superuser-secret
+                  key: username
+      containers:
+        - name: system-migration
+          image: postgres:16
+          command:
+            - bash
+            - -c
+            - |
+              apt-get update && apt-get install -y gettext-base && rm -rf /var/lib/apt/lists/*
+              echo "Running system migrations..."
+              envsubst < /migrations/init-template.sql > /tmp/init.sql
+              PGPASSWORD=$POSTGRES_PASSWORD \
+              psql -h postgresql-cluster-rw -p 5432 -U $POSTGRES_USER -d postgres -f /tmp/init.sql
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-superuser-secret
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-superuser-secret
+                  key: password
+            - name: AUTH_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-service-config
+                  key: DATABASE_USER
+            - name: AUTH_USER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-secrets
+                  key: POSTGRES_PASSWORD
+            - name: DB_AUTH
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-service-config
+                  key: DATABASE_DBNAME
+          volumeMounts:
+            - name: migration-sql
+              mountPath: /migrations
+      volumes:
+        - name: migration-sql
+          configMap:
+            name: system-migration-sql

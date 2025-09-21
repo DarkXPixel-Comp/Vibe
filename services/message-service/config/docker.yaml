@@ -1,0 +1,18 @@
+postgres:
+  host: "postgres-auth"
+  port: 5432
+  user: "message_user"
+  password: "message_pass"
+  dbname: "vibe_message"
+  sslmode: "disable"
+grpc:
+  port: 50035
+  timeout: 60s
+redis:
+  host: "redis"
+  port: "6379"
+  password: "password"
+  db: 0
+auth-service:
+  host: "auth-service"
+  port: 50032

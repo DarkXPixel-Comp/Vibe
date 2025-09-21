@@ -1,0 +1,14 @@
+postgresql:
+  host: "localhost"
+  port: 5432
+  user: "chat_user"
+  password: "chat_pass"
+  dbname: "vibe_chat"
+  sslmode: "disable"
+grpc:
+  port: 50034
+  timeout: 60s
+
+auth-service:
+  host: "localhost"
+  port: 50032

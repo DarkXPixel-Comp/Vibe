@@ -1,0 +1,94 @@
+### Go ###
+# Бинарные файлы
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Кэш и модули
+/vendor/
+/bin/
+/pkg/
+/cover.out
+
+### C++ ###
+# Бинарники и объектные файлы
+*.o
+*.obj
+*.gch
+*.pch
+*.so
+*.dylib
+*.dll
+*.a
+*.lib
+*.exe
+*.out
+*.app
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.ninja
+.build/
+
+### Flutter / Dart ###
+.dart_tool/
+/.packages
+.pub/
+/build/
+flutter_*.png
+*.flutter-plugins
+*.flutter-plugins-dependencies
+*.flutter-versions
+.flutter-plugins
+.flutter-plugins-dependencies
+.flutter-versions
+
+# iOS/Android из Flutter
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/ephemeral/
+**/android/.gradle/
+**/android/local.properties
+**/android/**/build/
+
+### Kubernetes / Helm / Skaffold ###
+# Skaffold build artifacts
+.skaffold/
+/skaffold*.yaml.tmp
+
+# Helm
+charts/*/charts/
+charts/*/tmpcharts/
+*.tgz
+
+# Kube configs (оставь, если хранишь отдельно)
+*.kubeconfig
+.kube/
+.kubectl/
+*.tmp.yaml
+
+### Общие ###
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+.vscode/
+.idea/
+*.swp
+*.swo

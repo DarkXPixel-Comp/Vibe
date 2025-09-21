@@ -1,0 +1,1 @@
+migrate -database "postgres://auth_user:auth_pass@localhost:5432/vibe_auth?sslmode=disable" -path . up

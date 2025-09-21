@@ -1,0 +1,18 @@
+database:
+  host: "localhost"
+  port: 5432
+  user: "auth_user"
+  password: "auth_pass"
+  dbname: "vibe_auth"
+  sslmode: "disable"
+
+grpc:
+  port: 50032
+  timeout: 60s
+redis:
+  host: "localhost"
+  port: "6379"
+  password: "password"
+
+JWT:
+  secret: "008b057678d1f6cbc8ddced4b387b92334006894686164d1de8efe957c74ed88"

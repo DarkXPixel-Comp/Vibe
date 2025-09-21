@@ -1,0 +1,120 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  namespace: default
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+      {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+      {{- end }}
+
+      initContainers:
+      - name: wait-for-postgresql
+        image: busybox
+        command: ['sh', '-c', 'until nc -z postgresql 5432; do echo waiting for db; sleep 2; done;']
+      - name: wait-for-redis
+        image: redis:7.2
+        command: ['sh', '-c', 'until redis-cli -h redis ping; do echo waiting for redis; sleep 3; done']
+      containers:
+      - name: auth-service
+        image: "{{ .Values.authService.image }}"
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        ports:
+        - containerPort: {{ .Values.authService.port }}
+        env:
+        - name: GRPC_PORT
+          value: "{{ .Values.authService.port }}"
+        - name: USER_SERVICE_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: vibe-config
+              key: USER_SERVICE_HOST
+        - name: USER_SERVICE_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: vibe-config
+              key: USER_SERVICE_PORT
+        - name: DATABASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: vibe-config
+              key: DATABASE_HOST
+        - name: DATABASE_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: vibe-config
+              key: DATABASE_PORT
+        - name: DATABASE_SSLMODE
+          valueFrom:
+            configMapKeyRef:
+              name: vibe-config
+              key: DATABASE_SSLMODE
+        - name: DATABASE_USER
+          valueFrom:
+            configMapKeyRef:
+              name: auth-service-config
+              key: DATABASE_USER
+        - name: DATABASE_DBNAME
+          valueFrom:
+            configMapKeyRef:
+              name: auth-service-config
+              key: DATABASE_DBNAME
+        - name: REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: vibe-config
+              key: REDIS_HOST
+        - name: REDIS_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: vibe-config
+              key: REDIS_PORT
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: auth-service-secrets
+              key: POSTGRES_PASSWORD
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: vibe-secrets
+              key: REDIS_PASSWORD
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: auth-service-secrets
+              key: JWT_SECRET       
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+      #   volumeMounts:
+      #   - name: certs
+      #     mountPath: /etc/auth-service
+      #     readOnly: true
+      # volumes:
+      # - name: certs
+      #   secret:
+      #     secretName: auth-service-tls
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+  namespace: default
+spec:
+  selector:
+    app: auth-service
+  ports:
+  - protocol: TCP
+    port: {{ .Values.authService.port }}
+    targetPort: {{ .Values.authService.port }}
+    name: grpc

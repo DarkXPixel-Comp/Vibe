@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package chat;
+
+option go_package = "github.com/DarkXPixel/Vibe/proto/chat";
+
+
+
+service ChatService {
+  rpc CreateChat(CreateChatRequest) returns (CreateChatResponse);
+  rpc AddUserToChat(AddUserToChatRequest) returns (AddUserToChatResponse);
+  rpc GetChat(GetChatRequest) returns (ChatResponse);
+  rpc ListUserChats(ListUserChatsRequest) returns (ListUserChatResponse);
+  rpc GetChats(GetChatsRequest) returns (GetChatsResponse);
+}
+
+message DeleteChatRequest {
+  string chat_id = 1;
+}
+
+message DeleteChatResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message CreateChatRequest {
+  ChatType type = 1;
+  string title = 2;
+  string creator_id = 3;
+  repeated string user_ids = 4;
+}
+
+message CreateChatResponse {
+  bool success = 1;
+  Chat chat = 2;
+  string error_message = 3;
+}
+
+message AddUserToChatRequest {
+  string chat_id = 1;
+  string user_id = 2;
+}
+
+message AddUserToChatResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message GetChatRequest {
+  string chat_id = 1;
+}
+message GetChatsRequest {
+  string user_id = 1;
+}
+
+message GetChatsResponse {
+  repeated Chat chats = 1;
+}
+
+message ChatResponse {
+  bool success = 1;
+  string error_message = 2;
+  Chat chat = 3;
+}
+
+message ListUserChatsRequest {
+  string user_id = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+}
+
+message ListUserChatResponse {
+  repeated Chat chats = 1;
+}
+
+message Chat {
+  string id = 1;
+  ChatType type = 2;
+  string title = 3;
+  string creator_id = 4;
+  string created_at = 5;
+  string updated_at = 6;
+  repeated string user_ids = 7;
+  int32 member_count = 8;
+}
+
+enum ChatType {
+  PRIVATE = 0;
+  GROUP = 1;
+  CHANNEL = 2;
+}

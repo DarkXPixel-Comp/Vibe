@@ -1,0 +1,44 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ required "clusterName is required" .Values.clusterName }}
+  namespace: {{ required "namespace is required" .Values.namespace }}
+spec:
+  {{- if .Values.imageName }}
+  imageName: {{ .Values.imageName | quote }}
+  {{- end }}
+  instances: {{ .Values.instances | default 2 }}
+  storage:
+    size: {{ .Values.storage.size | default "2Gi" }}
+    {{- if .Values.storage.storageClass }}
+    storageClass: {{ .Values.storage.storageClass | quote }}
+    {{- end }}
+
+  managed:
+    roles:
+    {{- if not .Values.roles }}
+      {{- fail "At least one role is required under .Values.roles" }}
+    {{- end }}
+    {{- range .Values.roles }}
+      - name: {{ required "roles[].name is required" .name }}
+        login: true
+        passwordSecret:
+          name: {{ required "roles[].passwordSecret is required" .passwordSecret }}
+    {{- end }}
+
+    {{- if and .Values.expose.rw.enabled .Values.expose.rw.type }}
+    services:
+      additional:
+        - selectorType: rw
+          serviceTemplate:
+            metadata:
+              name: {{ printf "%s-rw-external" .Values.clusterName }}
+              annotations:
+                {{- toYaml .Values.expose.rw.annotations | nindent 16 }}
+            spec:
+              type: {{ .Values.expose.rw.type }}
+              ports:
+                - name: postgres
+                  port: {{ .Values.expose.rw.port | default 5432 }}
+                  targetPort: 5432
+    {{- end }}
