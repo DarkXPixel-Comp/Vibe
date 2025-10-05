@@ -14,6 +14,7 @@ type RedisRepository interface {
 	GetClient() *redis.Client
 	Set(ctx context.Context, key, value string, ttl time.Duration) error
 	Get(ctx context.Context, key string) (string, error)
+	Del(ctx context.Context, key string) error
 }
 
 type redisRepository struct {
@@ -43,6 +44,10 @@ func (s *redisRepository) Get(ctx context.Context, key string) (string, error) {
 }
 func (s *redisRepository) Set(ctx context.Context, key, value string, ttl time.Duration) error {
 	return s.redisClient.Set(ctx, key, value, ttl).Err()
+}
+
+func (s *redisRepository) Del(ctx context.Context, key string) error {
+	return s.redisClient.Del(ctx, key).Err()
 }
 
 func (s *redisRepository) PingRedis(ctx context.Context) error {

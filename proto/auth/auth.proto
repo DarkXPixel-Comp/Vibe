@@ -8,6 +8,7 @@ service AuthService {
     rpc SendVerificationCode(PhoneNumberRequest) returns (SendCodeResponse);
     rpc VerifyCode(VerifyCodeRequest) returns (AuthResponse);
     rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenRespone);
+    rpc RefreshToken(RefreshTokenRequest) returns (AuthResponse);
     //rpc ValidateToken(TokenRequest) returns (UserSession);
 }
 
@@ -16,9 +17,7 @@ message PhoneNumberRequest {
 }
 
 message SendCodeResponse {
-    string message = 1;
-    bool success = 2;
-    string token = 3;
+    string token = 1;
 }
 
 message VerifyCodeRequest {
@@ -32,15 +31,17 @@ message ValidateTokenRequest {
 }
 
 message ValidateTokenRespone {
-    bool success = 1;
-    string user_id = 2;
+    string user_id = 1;
 }
 
 message AuthResponse {
-    bool success = 1;
-    string auth_token = 2;
+    string access_token = 1;
+    string refresh_token = 2;
     string user_id = 3;
-    string message = 4;
+}
+
+message RefreshTokenRequest {
+    string refresh_token = 1;
 }
 
 // message UserSession {

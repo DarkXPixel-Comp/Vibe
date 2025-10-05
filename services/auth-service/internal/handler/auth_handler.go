@@ -32,77 +32,96 @@ func NewAuthHandler(service service.AuthService) *AuthHandler {
 func (s *AuthHandler) SendVerificationCode(ctx context.Context, req *authproto.PhoneNumberRequest) (*authproto.SendCodeResponse, error) {
 	phoneNumber, err := utils.ValidatePhoneNumber(req.GetPhoneNumber())
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "invalid phone number: %w", err)
+		return nil, status.Errorf(codes.InvalidArgument, "invalid phone number: %v", err)
 	}
 
 	tok, err := s.service.SendCode(ctx, phoneNumber)
 	if err != nil {
-		return &authproto.SendCodeResponse{
-			Success: false,
-			Message: "error send code",
-			Token:   "",
-		}, status.Errorf(codes.Internal, "internal error: %s", err)
+		// Errors from service are already gRPC status errors
+		return nil, err
 	}
 
 	return &authproto.SendCodeResponse{
-		Success: true,
-		Message: "its ok",
-		Token:   tok,
+		Token: tok,
 	}, nil
 }
 
 func (s *AuthHandler) VerifyCode(ctx context.Context, req *authproto.VerifyCodeRequest) (*authproto.AuthResponse, error) {
 	response, err := s.service.VerifyCode(ctx, req.GetToken(), req.GetCode())
 	if err != nil {
-		return &authproto.AuthResponse{
-			Success:   false,
-			AuthToken: "",
-			UserId:    "",
-			Message:   fmt.Sprintf("Wrong code: %s", err.Error()),
-		}, nil
+		return nil, err // Errors from service are already gRPC status errors
 	}
 
 	return &authproto.AuthResponse{
-		Success:   true,
-		AuthToken: response.Token,
-		UserId:    response.User_id,
+		AccessToken:  response.AccessToken,
+		RefreshToken: response.RefreshToken,
+		UserId:       response.UserID,
+	}, nil
+}
+
+func (s *AuthHandler) RefreshToken(ctx context.Context, req *authproto.RefreshTokenRequest) (*authproto.AuthResponse, error) {
+	if req.GetRefreshToken() == "" {
+		return nil, status.Error(codes.InvalidArgument, "refresh token is required")
+	}
+
+	response, err := s.service.RefreshToken(ctx, req.GetRefreshToken())
+	if err != nil {
+		return nil, err // Errors from service are already gRPC status errors
+	}
+
+	return &authproto.AuthResponse{
+		AccessToken:  response.AccessToken,
+		RefreshToken: response.RefreshToken,
+		UserId:       response.UserID,
 	}, nil
 }
 
 func (s *AuthHandler) ValidateToken(ctx context.Context, req *authproto.ValidateTokenRequest) (*authproto.ValidateTokenRespone, error) {
-	//s.service.ValidateToken(ctx)
-	user_id, err := s.service.ValidateToken(ctx, req.GetToken())
+	userID, err := s.service.ValidateToken(ctx, req.GetToken())
 	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "invalid token")
+		return nil, err // Errors from service are already gRPC status errors
 	}
 
 	return &authproto.ValidateTokenRespone{
-		Success: true,
-		UserId:  user_id,
+		UserId: userID,
 	}, nil
 }
 
 func (s *AuthHandler) Check(ctx context.Context, req *envoyauth.CheckRequest) (*envoyauth.CheckResponse, error) {
-	headers := req.Attributes.Request.Http.Headers
-	authHeader, ok := headers["authorization"]
-	if !ok || !strings.HasPrefix(authHeader, "Bearer ") {
+	authHeader, ok := req.GetAttributes().GetRequest().GetHttp().GetHeaders()["authorization"]
+	if !ok {
 		return &envoyauth.CheckResponse{
-			Status:       &googleapis.Status{Code: int32(codes.Unauthenticated), Message: "missing Authorization header"},
-			HttpResponse: &envoyauth.CheckResponse_DeniedResponse{DeniedResponse: &envoyauth.DeniedHttpResponse{Status: &typev3.HttpStatus{Code: typev3.StatusCode(401)}}},
-		}, fmt.Errorf("missing or invalid Authorization header")
+			Status: &googleapis.Status{Code: int32(codes.Unauthenticated), Message: "Authorization header missing"},
+			HttpResponse: &envoyauth.CheckResponse_DeniedResponse{
+				DeniedResponse: &envoyauth.DeniedHttpResponse{
+					Status: &typev3.HttpStatus{Code: typev3.StatusCode_Unauthorized},
+				},
+			},
+		}, nil
 	}
 
 	token := strings.TrimPrefix(authHeader, "Bearer ")
-	response, err := s.ValidateToken(ctx, &authproto.ValidateTokenRequest{Token: token})
-	if err != nil {
-		return nil, fmt.Errorf("error validate token: %w", err)
+	if token == "" {
+		return &envoyauth.CheckResponse{
+			Status: &googleapis.Status{Code: int32(codes.Unauthenticated), Message: "Bearer token missing"},
+			HttpResponse: &envoyauth.CheckResponse_DeniedResponse{
+				DeniedResponse: &envoyauth.DeniedHttpResponse{
+					Status: &typev3.HttpStatus{Code: typev3.StatusCode_Unauthorized},
+				},
+			},
+		}, nil
 	}
 
-	if !response.Success {
+	userID, err := s.service.ValidateToken(ctx, token)
+	if err != nil {
 		return &envoyauth.CheckResponse{
-			Status:       &googleapis.Status{Code: int32(codes.Unauthenticated), Message: "invaid token"},
-			HttpResponse: &envoyauth.CheckResponse_DeniedResponse{DeniedResponse: &envoyauth.DeniedHttpResponse{Status: &typev3.HttpStatus{Code: typev3.StatusCode(401)}}},
-		}, fmt.Errorf("invalid token")
+			Status: &googleapis.Status{Code: int32(codes.Unauthenticated), Message: "Invalid token"},
+			HttpResponse: &envoyauth.CheckResponse_DeniedResponse{
+				DeniedResponse: &envoyauth.DeniedHttpResponse{
+					Status: &typev3.HttpStatus{Code: typev3.StatusCode_Unauthorized},
+				},
+			},
+		}, nil
 	}
 
 	return &envoyauth.CheckResponse{
@@ -113,7 +132,7 @@ func (s *AuthHandler) Check(ctx context.Context, req *envoyauth.CheckRequest) (*
 					{
 						Header: &corev3.HeaderValue{
 							Key:   "x-user-id",
-							Value: response.GetUserId(),
+							Value: userID,
 						},
 					},
 				},
