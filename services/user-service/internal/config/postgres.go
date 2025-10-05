@@ -1,10 +1,10 @@
 package config
 
 type PostgresConfig struct {
-	Host     string `mapstructure:"host" validate:"required"`
-	Port     string `mapstructure:"port" validate:"required"`
-	User     string `mapstructure:"user" validate:"required"`
-	Password string `mapstructure:"password" validate:"required"`
-	DBName   string `mapstructure:"dbname" validate:"required"`
-	SSLMode  string `mapstructure:"sslmode" validate:"required"`
+	Host     string `env:"HOST" validate:"required"`
+	Port     string `env:"PORT" validate:"required"`
+	User     string `env:"USER" validate:"required"`
+	Password string `env:"PASSWORD" validate:"required"`
+	DBName   string `env:"DBNAME" validate:"required"`
+	SSLMode  string `env:"SSLMODE" validate:"required"`
 }

@@ -11,7 +11,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/DarkXPixel/Vibe/proto/auth"
+	//"github.com/DarkXPixel/Vibe/proto/auth"
+	//authgrpc "buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go/auth/authgrpc"
+	authgrpc "buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go/auth/authgrpc"
 	"github.com/DarkXPixel/Vibe/services/auth-service/internal/config"
 	"github.com/DarkXPixel/Vibe/services/auth-service/internal/database"
 	"github.com/DarkXPixel/Vibe/services/auth-service/internal/handler"
@@ -74,7 +76,7 @@ func initApp() (*App, error) {
 	app.handler = handler.NewAuthHandler(app._authService)
 
 	//auth.RegisterAuthServiceServer(app.grpcServer, app.authService)
-	auth.RegisterAuthServiceServer(app.grpcServer, app.handler)
+	authgrpc.RegisterAuthServiceServer(app.grpcServer, app.handler)
 	envoyauth.RegisterAuthorizationServer(app.grpcServer, app.handler)
 
 	app.log = slog.New(slog.NewTextHandler(os.Stdout, nil))

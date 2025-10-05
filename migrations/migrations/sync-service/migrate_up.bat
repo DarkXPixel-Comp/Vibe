@@ -1,1 +1,0 @@
-migrate -database "postgres://sync_user:sync_pass@localhost:5432/vibe_sync?sslmode=disable" -path . up

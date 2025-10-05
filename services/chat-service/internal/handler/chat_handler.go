@@ -4,7 +4,8 @@ import (
 	"context"
 	"time"
 
-	protoChat "github.com/DarkXPixel/Vibe/proto/chat"
+	chatgrpc "buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go/chat/chatgrpc"
+	chatproto "buf.build/gen/go/darkxpixel/vibe-contracts/protocolbuffers/go/chat"
 	"github.com/DarkXPixel/Vibe/services/chat-service/internal/model"
 	"github.com/DarkXPixel/Vibe/services/chat-service/internal/service"
 	"google.golang.org/grpc/codes"
@@ -12,7 +13,7 @@ import (
 )
 
 type ChatHandler struct {
-	protoChat.UnimplementedChatServiceServer
+	chatgrpc.UnimplementedChatServiceServer
 	chatService service.ChatService
 }
 
@@ -22,24 +23,24 @@ func NewChatHandler(chatService service.ChatService) *ChatHandler {
 	}
 }
 
-func (h *ChatHandler) CreateChat(ctx context.Context, req *protoChat.CreateChatRequest) (*protoChat.CreateChatResponse, error) {
+func (h *ChatHandler) CreateChat(ctx context.Context, req *chatproto.CreateChatRequest) (*chatproto.CreateChatResponse, error) {
 	if req.GetCreatorId() != ctx.Value("user_id") {
 		return nil, status.Error(codes.PermissionDenied, "you can create chat only for you")
 	}
 
 	chat, err := h.chatService.CreateChat(ctx, model.ChatType(req.GetType()), req.GetTitle(), req.GetCreatorId(), req.GetUserIds())
 	if err != nil {
-		return &protoChat.CreateChatResponse{
+		return &chatproto.CreateChatResponse{
 			Success:      false,
 			ErrorMessage: err.Error(),
 		}, nil
 	}
 
-	return &protoChat.CreateChatResponse{
+	return &chatproto.CreateChatResponse{
 		Success: true,
-		Chat: &protoChat.Chat{
+		Chat: &chatproto.Chat{
 			Id:          chat.ID,
-			Type:        protoChat.ChatType(chat.Type),
+			Type:        chatproto.ChatType(chat.Type),
 			Title:       chat.Title,
 			CreatorId:   chat.CreatorID,
 			CreatedAt:   chat.CreatedAt.Format(time.RFC3339),
@@ -50,7 +51,7 @@ func (h *ChatHandler) CreateChat(ctx context.Context, req *protoChat.CreateChatR
 	}, nil
 }
 
-func (h *ChatHandler) GetChats(ctx context.Context, req *protoChat.GetChatsRequest) (*protoChat.GetChatsResponse, error) {
+func (h *ChatHandler) GetChats(ctx context.Context, req *chatproto.GetChatsRequest) (*chatproto.GetChatsResponse, error) {
 	if req.GetUserId() != ctx.Value("user_id") {
 		return nil, status.Error(codes.PermissionDenied, "you can get chats only for you")
 	}
@@ -61,11 +62,11 @@ func (h *ChatHandler) GetChats(ctx context.Context, req *protoChat.GetChatsReque
 		return nil, status.Error(codes.NotFound, "error get chats")
 	}
 
-	var protoChats []*protoChat.Chat
+	var protoChats []*chatproto.Chat
 	for _, chat := range chats {
-		protoChats = append(protoChats, &protoChat.Chat{
+		protoChats = append(protoChats, &chatproto.Chat{
 			Id:          chat.ID,
-			Type:        protoChat.ChatType(chat.Type),
+			Type:        chatproto.ChatType(chat.Type),
 			Title:       chat.Title,
 			CreatorId:   chat.CreatorID,
 			CreatedAt:   chat.CreatedAt.Format(time.RFC3339),
@@ -75,7 +76,7 @@ func (h *ChatHandler) GetChats(ctx context.Context, req *protoChat.GetChatsReque
 		})
 	}
 
-	return &protoChat.GetChatsResponse{
+	return &chatproto.GetChatsResponse{
 		Chats: protoChats,
 	}, nil
 }

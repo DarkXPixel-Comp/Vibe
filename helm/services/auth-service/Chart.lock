@@ -1,0 +1,9 @@
+dependencies:
+- name: postgres-cluster
+  repository: file://../../base/postgres-cluster
+  version: 0.1.0
+- name: redis-cluster
+  repository: file://../../base/redis-cluster
+  version: 0.1.0
+digest: sha256:1d802a965bc95c0d250730310480974d2c151d7c63b3187a03655af01da4f235
+generated: "2025-09-21T20:08:54.4416865+03:00"

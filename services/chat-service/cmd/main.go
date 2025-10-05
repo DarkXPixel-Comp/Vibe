@@ -8,8 +8,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	protoAuth "github.com/DarkXPixel/Vibe/proto/auth"
-	protoChat "github.com/DarkXPixel/Vibe/proto/chat"
+	authgrpc "buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go/auth/authgrpc"
+	chatgrpc "buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go/chat/chatgrpc"
 	"github.com/DarkXPixel/Vibe/services/chat-service/internal/config"
 	"github.com/DarkXPixel/Vibe/services/chat-service/internal/handler"
 	"github.com/DarkXPixel/Vibe/services/chat-service/internal/interceptor"
@@ -25,7 +25,7 @@ type App struct {
 	db              *pgxpool.Pool
 	config          *config.Config
 	authConn        *grpc.ClientConn
-	authClient      protoAuth.AuthServiceClient
+	authClient      authgrpc.AuthServiceClient
 	authInterceptor *interceptor.AuthInterceptor
 	handler         *handler.ChatHandler
 	chatRepository  *repository.ChatRepository
@@ -57,7 +57,7 @@ func initApp() (*App, error) {
 	}
 
 	app.authConn = authConn
-	app.authClient = protoAuth.NewAuthServiceClient(authConn)
+	app.authClient = authgrpc.NewAuthServiceClient(authConn)
 	app.authInterceptor = interceptor.NewAuthInterceptor(app.authClient)
 
 	app.grpcServer = grpc.NewServer(grpc.UnaryInterceptor(app.authInterceptor.Unary()))
@@ -65,7 +65,7 @@ func initApp() (*App, error) {
 	app.chatService = &chat_service
 	app.handler = handler.NewChatHandler(*app.chatService)
 
-	protoChat.RegisterChatServiceServer(app.grpcServer, app.handler)
+	chatgrpc.RegisterChatServiceServer(app.grpcServer, app.handler)
 
 	app.log = slog.New(slog.NewTextHandler(os.Stdout, nil))
 	slog.SetDefault(app.log)

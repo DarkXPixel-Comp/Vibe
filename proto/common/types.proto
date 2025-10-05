@@ -20,8 +20,8 @@ message ChatState {
 message Update {
     string id = 1;
     string user_id = 2;
-    string type = 3;
-    string payload = 4;
+    string type = 3; //text, call, audio, video, file
+    string payload = 4; // JSON-encoded data
     int64 pts = 5;
     int64 unordered_pts = 6;
     string timestamp = 7;

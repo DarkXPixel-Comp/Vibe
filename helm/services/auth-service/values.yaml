@@ -1,7 +1,7 @@
 # Параметры приложения (Deployment/Service)
 image:
   repository: vibe/auth-service
-  tag: 7662f43-dirty
+  tag: 2e12344-dirty
   pullPolicy: IfNotPresent
 
 replicaCount: 1
@@ -19,7 +19,7 @@ config:
   namespace: auth
   env:
     GRPC_PORT: 50032
-    USER_SERVICE_HOST: user-service
+    USER_SERVICE_HOST: user-service.user.svc.cluster.local
     USER_SERVICE_PORT: "50033"
     DATABASE_HOST: auth-pg-rw
     DATABASE_PORT: "5432"

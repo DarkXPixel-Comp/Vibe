@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/DarkXPixel/Vibe/services/user-service/internal/model"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -24,15 +25,21 @@ func NewUserRepository(postgres *pgxpool.Pool) UserRepository {
 
 func (r *userRepository) GetUserByPhone(ctx context.Context, phone string) (*model.User, error) {
 	user := &model.User{}
+	var userName sql.NullString
 
 	query := `
 		SELECT user_id, phone, user_name, created_at, updated_at
 		FROM users WHERE phone = $1
 	`
-	err := r.postgres.QueryRow(ctx, query, phone).Scan(&user.UserID, &user.Phone, &user.UserName, &user.Created_at, &user.Updated_at)
-
+	err := r.postgres.QueryRow(ctx, query, phone).Scan(&user.UserID, &user.Phone, &userName, &user.Created_at, &user.Updated_at)
 	if err != nil {
 		return nil, err
+	}
+
+	if userName.Valid {
+		user.UserName = userName.String
+	} else {
+		user.UserName = ""
 	}
 
 	return user, nil

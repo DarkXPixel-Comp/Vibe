@@ -82,24 +82,27 @@ func (s *authService) VerifyCode(ctx context.Context, token, code string) (*mode
 
 	user, err := s.userClient.GetOrCreateUser(ctx, phone)
 	if err != nil {
-		return nil, fmt.Errorf("error getorcreateuser")
+		return nil, fmt.Errorf("error getorcreateuser: %w", err)
 	}
 
-	tok, err := utils.GenerateToken32()
-	if err != nil {
-		return nil, fmt.Errorf("error generate token")
-	}
+	var tok, hashedToken string
+	for {
+		tok, err = utils.GenerateToken32()
+		if err != nil {
+			return nil, fmt.Errorf("error generate token: %w", err)
+		}
 
-	hashedToken := utils.HashToken(tok)
+		var id string
+		err := s.db.QueryRow(ctx, `
+			INSERT INTO session_tokens (user_id, token_hash, created_at, last_used_at, revoked)
+			VALUES ($1, $2, NOW(), NOW(), false)
+			ON CONFLICT (token_hash) DO NOTHING
+			RETURNING id`, user.GetUserId(), hashedToken).Scan(&id)
 
-	query := `
-		INSERT INTO session_tokens (user_id, token_hash, created_at, last_used_at, revoked)
-		VALUES ($1, $2, NOW(), NOW(), false)
-	`
-
-	_, err = s.db.Exec(ctx, query, user.GetUserId(), hashedToken)
-	if err != nil {
-		return nil, fmt.Errorf("falied to save token: %w", err)
+		if err == pgx.ErrNoRows {
+			continue
+		}
+		break
 	}
 
 	return &model.AuthResponse{
@@ -127,7 +130,7 @@ func (s *authService) ValidateToken(ctx context.Context, token string) (string, 
 		if errors.Is(err, pgx.ErrNoRows) {
 			return "", status.Error(codes.InvalidArgument, "invalid token")
 		}
-		return "", status.Errorf(codes.Internal, "error db: %w", err)
+		return "", status.Errorf(codes.Internal, "error db: %s", err.Error())
 	}
 	if tokenData.Revoked {
 		return "", status.Error(codes.InvalidArgument, "invalid token")
@@ -142,7 +145,7 @@ func (s *authService) ValidateToken(ctx context.Context, token string) (string, 
 	`
 	_, err = s.db.Exec(ctx, updateQuery, hashed)
 	if err != nil {
-		return "", status.Errorf(codes.Internal, "%w", err)
+		return "", status.Errorf(codes.Internal, "%s", err.Error())
 	}
 
 	return tokenData.UserID, nil

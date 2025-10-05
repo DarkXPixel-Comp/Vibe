@@ -3,16 +3,22 @@ version: "3.9"
 services:
   auth-service:
     build:
-      context: ../
-      dockerfile: ./services/auth-service/Dockerfile
+      context: ../services/auth-service
+      dockerfile: ./Dockerfile
+      args:
+        BUF_TOKEN: ${BUF_TOKEN}
     ports:
       - "50032:50032"
+    #env_file: ./.env
     environment:
       CONFIG_PATH: /app/config
       APP_ENV: docker
-    depends_on:
-      - postgres-auth
-      - redis
+      # GOPRIVATE: buf.build
+      # GONOSUMDB: buf.build
+
+    # depends_on:
+    #   - postgres-auth
+    #   - redis
     networks:
       - vibe_network
   user-service:

@@ -4,7 +4,8 @@ import (
 	"context"
 	"strings"
 
-	protoAuth "github.com/DarkXPixel/Vibe/proto/auth"
+	authgrpc "buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go/auth/authgrpc"
+	authproto "buf.build/gen/go/darkxpixel/vibe-contracts/protocolbuffers/go/auth"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -12,10 +13,10 @@ import (
 )
 
 type AuthInterceptor struct {
-	AuthClient protoAuth.AuthServiceClient
+	AuthClient authgrpc.AuthServiceClient
 }
 
-func NewAuthInterceptor(authClient protoAuth.AuthServiceClient) *AuthInterceptor {
+func NewAuthInterceptor(authClient authgrpc.AuthServiceClient) *AuthInterceptor {
 	return &AuthInterceptor{
 		AuthClient: authClient,
 	}
@@ -44,7 +45,7 @@ func (i *AuthInterceptor) Unary() grpc.UnaryServerInterceptor {
 			return nil, status.Error(codes.Unauthenticated, "invalid token format")
 		}
 
-		authResp, err := i.AuthClient.ValidateToken(ctx, &protoAuth.ValidateTokenRequest{Token: token})
+		authResp, err := i.AuthClient.ValidateToken(ctx, &authproto.ValidateTokenRequest{Token: token})
 		if err != nil || !authResp.Success {
 			return nil, status.Error(codes.Unauthenticated, "invalid or expired token")
 		}

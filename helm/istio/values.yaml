@@ -3,27 +3,20 @@ global:
   appNamespace: app
   ingressNamespace: istio-system
 
-# auth-service: HTTP эндпоинт интроспекции (легко держать отдельно от gRPC)
 authService:
   host: auth-service.app.svc.cluster.local
   port: 50032
   introspect:
     timeoutMs: 250
-    # путь, который дергает ext_authz (если нужен конкретный)
-    path: /introspect
 
 routes:
-  # publicGrpc: список gRPC-префиксов методов, которые идут без авторизации
-  # Формат: /package.Service/ (или точный /package.Service/Method)
   publicGrpc:
     - /auth.AuthService/Login
     - /health.HealthService/Check
-  # secure: все остальные пойдут на defaultUpstream
   secure:
     defaultUpstream:
       host: api-gateway.app.svc.cluster.local
       port: 50051
 
 security:
-  # Локально PERMISSIVE, на сервере STRICT
   mtlsMode: PERMISSIVE

@@ -1,6 +1,6 @@
 package config
 
 type AuthServiceConfig struct {
-	Host string `mapstructure:"host" validate:"required"`
-	Port int    `mapstructure:"port" validate:"required"`
+	Host string `env:"HOST" validate:"required"`
+	Port int    `env:"PORT" validate:"required"`
 }

@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	protoAuth "github.com/DarkXPixel/Vibe/proto/auth"
+	authgrpc "buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go/auth/authgrpc"
+	authproto "buf.build/gen/go/darkxpixel/vibe-contracts/protocolbuffers/go/auth"
 	"github.com/DarkXPixel/Vibe/services/auth-service/internal/service"
 	"github.com/DarkXPixel/Vibe/services/auth-service/internal/utils"
 	corev3 "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
@@ -17,7 +18,7 @@ import (
 )
 
 type AuthHandler struct {
-	protoAuth.UnimplementedAuthServiceServer
+	authgrpc.UnimplementedAuthServiceServer
 	envoyauth.UnimplementedAuthorizationServer
 	service service.AuthService
 }
@@ -28,7 +29,7 @@ func NewAuthHandler(service service.AuthService) *AuthHandler {
 	}
 }
 
-func (s *AuthHandler) SendVerificationCode(ctx context.Context, req *protoAuth.PhoneNumberRequest) (*protoAuth.SendCodeResponse, error) {
+func (s *AuthHandler) SendVerificationCode(ctx context.Context, req *authproto.PhoneNumberRequest) (*authproto.SendCodeResponse, error) {
 	phoneNumber, err := utils.ValidatePhoneNumber(req.GetPhoneNumber())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid phone number: %w", err)
@@ -36,24 +37,24 @@ func (s *AuthHandler) SendVerificationCode(ctx context.Context, req *protoAuth.P
 
 	tok, err := s.service.SendCode(ctx, phoneNumber)
 	if err != nil {
-		return &protoAuth.SendCodeResponse{
+		return &authproto.SendCodeResponse{
 			Success: false,
 			Message: "error send code",
 			Token:   "",
 		}, status.Errorf(codes.Internal, "internal error: %s", err)
 	}
 
-	return &protoAuth.SendCodeResponse{
+	return &authproto.SendCodeResponse{
 		Success: true,
 		Message: "its ok",
 		Token:   tok,
 	}, nil
 }
 
-func (s *AuthHandler) VerifyCode(ctx context.Context, req *protoAuth.VerifyCodeRequest) (*protoAuth.AuthResponse, error) {
+func (s *AuthHandler) VerifyCode(ctx context.Context, req *authproto.VerifyCodeRequest) (*authproto.AuthResponse, error) {
 	response, err := s.service.VerifyCode(ctx, req.GetToken(), req.GetCode())
 	if err != nil {
-		return &protoAuth.AuthResponse{
+		return &authproto.AuthResponse{
 			Success:   false,
 			AuthToken: "",
 			UserId:    "",
@@ -61,21 +62,21 @@ func (s *AuthHandler) VerifyCode(ctx context.Context, req *protoAuth.VerifyCodeR
 		}, nil
 	}
 
-	return &protoAuth.AuthResponse{
+	return &authproto.AuthResponse{
 		Success:   true,
 		AuthToken: response.Token,
 		UserId:    response.User_id,
 	}, nil
 }
 
-func (s *AuthHandler) ValidateToken(ctx context.Context, req *protoAuth.ValidateTokenRequest) (*protoAuth.ValidateTokenRespone, error) {
+func (s *AuthHandler) ValidateToken(ctx context.Context, req *authproto.ValidateTokenRequest) (*authproto.ValidateTokenRespone, error) {
 	//s.service.ValidateToken(ctx)
 	user_id, err := s.service.ValidateToken(ctx, req.GetToken())
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "invalid token")
 	}
 
-	return &protoAuth.ValidateTokenRespone{
+	return &authproto.ValidateTokenRespone{
 		Success: true,
 		UserId:  user_id,
 	}, nil
@@ -92,7 +93,7 @@ func (s *AuthHandler) Check(ctx context.Context, req *envoyauth.CheckRequest) (*
 	}
 
 	token := strings.TrimPrefix(authHeader, "Bearer ")
-	response, err := s.ValidateToken(ctx, &protoAuth.ValidateTokenRequest{Token: token})
+	response, err := s.ValidateToken(ctx, &authproto.ValidateTokenRequest{Token: token})
 	if err != nil {
 		return nil, fmt.Errorf("error validate token: %w", err)
 	}

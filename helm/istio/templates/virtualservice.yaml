@@ -9,7 +9,6 @@ spec:
   gateways:
   - {{ .Values.global.appNamespace }}/edge-gw
   http:
-  # Публичные gRPC-методы: байпас авторизации
   - name: public-grpc
     match:
 {{- range .Values.routes.publicGrpc }}
@@ -26,7 +25,6 @@ spec:
         host: {{ .Values.authService.host }}
         port:
           number: {{ .Values.authService.port }}
-  # Всё остальное — защищённые gRPC-вызовы
   - name: secure-grpc
     headers:
       request:

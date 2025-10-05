@@ -1,0 +1,87 @@
+# Параметры приложения (Deployment/Service)
+image:
+  repository: vibe/user-service
+  tag: 2e12344-dirty
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 50033
+
+redis:
+  password: redis
+  secretName: redis-secret
+
+config:
+  secretName: service-secret
+  namespace: user
+  env:
+    GRPC_PORT: 50033
+    DATABASE_HOST: user-pg-rw
+    DATABASE_PORT: "5432"
+    DATABASE_SSLMODE: disable
+    DATABASE_USER: user_user
+    DATABASE_DBNAME: user-db
+    REDIS_HOST: user-redis-leader
+    REDIS_PORT: "6379"
+
+
+db:
+  username: user_user
+  password: postgres 
+  secretName: user-db-secret
+  database: user-db
+
+migrations:
+  enabled: true
+  command: /app/migrate -path=/app/migrations \
+    -database "postgres://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABASE_HOST):$(DATABASE_PORT)/$(DATABASE_DBNAME)?sslmode=$(DATABASE_SSLMODE)" up
+
+
+# Конфиг сабчарта postgres-cluster
+postgres-cluster:
+  clusterName: user-pg
+  namespace: user
+  instances: 1
+  storage:
+    size: 2Gi
+  roles:
+    - name: user_user
+      passwordSecret: user-db-secret
+  database:
+    enabled: true
+    name: user-db
+    owner: user_user
+  expose:
+    rw:
+      enabled: false 
+
+redis-cluster:
+  clusterName: user-redis
+  namespace: user
+  instances: 1                # для dev можно 1, для prod — 3+
+  storage:
+    size: 512Mi
+    storageClass: ""          # если пусто — возьмется по умолчанию
+  auth:
+    enabled: true
+    passwordSecret: user-redis-secret
+    password: myRedisPass123  # в проде лучше задавать через секрет
+  expose:
+    leader:
+      enabled: true
+      type: LoadBalancer
+      port: 6379
+      annotations:
+        service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    follower:
+      enabled: false
+      type: NodePort
+      port: 30079
+      annotations: {}
+
+  metrics:
+    enabled: false
+

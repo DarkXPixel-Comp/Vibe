@@ -5,15 +5,19 @@ metadata:
 build:
   artifacts:
   - image: vibe/auth-service
-    context: .
+    context: ./services/auth-service
     docker:
-      dockerfile: services/auth-service/Dockerfile
-  - image: vibe/vibe-migrations
-    context: ./migrations
-    docker:
-      dockerfile: migrations/Dockerfile
+      dockerfile: Dockerfile
+      secrets:
+        - id: buf_token
+          env: BUF_TOKEN
+  # - image: vibe/user-service
+  #   context: .
+  #   docker:
+  #     dockerfile: services/user-service/Dockerfile
   local:
     push: false
+    useBuildkit: true
   tagPolicy:
     gitCommit: {}
 
@@ -24,3 +28,7 @@ deploy:
         chartPath: helm/services/auth-service
         namespace: auth
         createNamespace: true
+      # - name: user-service
+      #   chartPath: helm/services/user-service
+      #   namespace: user
+      #   createNamespace: true
