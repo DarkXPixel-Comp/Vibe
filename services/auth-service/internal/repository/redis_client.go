@@ -34,6 +34,12 @@ func NewRedisRepository(conf *config.RedisConfig) RedisRepository {
 	}
 }
 
+func NewRedisRepositoryWithClient(client *redis.Client) RedisRepository {
+	return &redisRepository{
+		redisClient: client,
+	}
+}
+
 func (s *redisRepository) GetClient() *redis.Client {
 	return s.redisClient
 }

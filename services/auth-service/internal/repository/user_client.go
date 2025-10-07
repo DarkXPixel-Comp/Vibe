@@ -4,14 +4,17 @@ import (
 	"context"
 	"time"
 
-	usergrpc "buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go/user/usergrpc"
-	userproto "buf.build/gen/go/darkxpixel/vibe-contracts/protocolbuffers/go/user"
+	"github.com/DarkXPixel/Vibe/proto/user"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+type UserClientInterface interface {
+	GetOrCreateUser(ctx context.Context, phone string) (*user.User, error)
+}
+
 type UserClient struct {
-	client usergrpc.UserServiceClient
+	client user.UserServiceClient
 }
 
 func NewUserClient(userServiceAddr string) (*UserClient, error) {
@@ -23,12 +26,12 @@ func NewUserClient(userServiceAddr string) (*UserClient, error) {
 	}
 
 	return &UserClient{
-		client: usergrpc.NewUserServiceClient(conn),
+		client: user.NewUserServiceClient(conn),
 	}, nil
 }
 
-func (uc *UserClient) GetOrCreateUser(ctx context.Context, phone string) (*userproto.User, error) {
-	resp, err := uc.client.GetOrCreateUser(ctx, &userproto.GetOrCreateUserRequest{Phone: phone})
+func (uc *UserClient) GetOrCreateUser(ctx context.Context, phone string) (*user.User, error) {
+	resp, err := uc.client.GetOrCreateUser(ctx, &user.GetOrCreateUserRequest{Phone: phone})
 	if err != nil {
 		return nil, err
 	}
