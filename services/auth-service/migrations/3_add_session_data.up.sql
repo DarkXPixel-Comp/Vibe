@@ -1,0 +1,4 @@
+ALTER TABLE session_tokens
+ADD COLUMN encrypted_session_key BYTEA NOT NULL,
+ADD COLUMN device_id VARCHAR(255) NOT NULL,
+ADD COLUMN device_name VARCHAR(255) NOT NULL;

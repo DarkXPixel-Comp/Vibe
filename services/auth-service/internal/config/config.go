@@ -14,6 +14,7 @@ type Config struct {
 	Redis       RedisConfig       `envPrefix:"REDIS_"`
 	JWT         JWTConfig         `envPrefix:"JWT_"`
 	UserService UserServiceConfig `envPrefix:"USER_SERVICE_"`
+	Session     SessionConfig     `envPrefix:"SESSION_"`
 	//Loki        LokiConfig        `mapstructure:"loki"`
 }
 

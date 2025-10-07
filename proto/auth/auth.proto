@@ -8,7 +8,8 @@ service AuthService {
     rpc SendVerificationCode(PhoneNumberRequest) returns (SendCodeResponse);
     rpc VerifyCode(VerifyCodeRequest) returns (AuthResponse);
     rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenRespone);
-    //rpc ValidateToken(TokenRequest) returns (UserSession);
+    rpc ListSessions(ListSessionsRequest) returns (ListSessionsResponse);
+    rpc RevokeSession(RevokeSessionRequest) returns (RevokeSessionResponse);
 }
 
 message PhoneNumberRequest {
@@ -25,6 +26,8 @@ message VerifyCodeRequest {
     string phone_number = 1;
     string code = 2;
     string token = 3;
+    string device_id = 4;
+    string device_name = 5;
 }
 
 message ValidateTokenRequest {
@@ -41,10 +44,30 @@ message AuthResponse {
     string auth_token = 2;
     string user_id = 3;
     string message = 4;
+    bytes session_key = 5;
 }
 
-// message UserSession {
-//     string user_id = 1;
-//     string username = 2;
-//     bool is_valid = 3;
-// }
+message Session {
+    string id = 1;
+    string device_name = 2;
+    bool is_current = 3;
+    string last_used_at = 4;
+    string created_at = 5;
+}
+
+message ListSessionsRequest {
+    string current_session_token = 1;
+}
+
+message ListSessionsResponse {
+    repeated Session sessions = 1;
+}
+
+message RevokeSessionRequest {
+    string session_id = 1;
+}
+
+message RevokeSessionResponse {
+    bool success = 1;
+    string message = 2;
+}
