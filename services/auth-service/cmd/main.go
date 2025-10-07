@@ -34,7 +34,7 @@ type App struct {
 	config       *config.Config
 	db           *pgxpool.Pool
 	redis        repository.RedisRepository
-	userClient   *repository.UserClient
+	userClient   repository.UserClient
 }
 
 func initApp() (*App, error) {
