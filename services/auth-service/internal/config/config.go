@@ -14,7 +14,7 @@ type Config struct {
 	Redis       RedisConfig       `envPrefix:"REDIS_"`
 	JWT         JWTConfig         `envPrefix:"JWT_"`
 	UserService UserServiceConfig `envPrefix:"USER_SERVICE_"`
-	//Loki        LokiConfig        `mapstructure:"loki"`
+	HTTP        HTTPConfig        `envPrefix:"HTTP_"`
 }
 
 func LoadConfig() (*Config, error) {

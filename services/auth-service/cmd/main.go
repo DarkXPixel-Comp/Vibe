@@ -13,74 +13,66 @@ import (
 
 	//"github.com/DarkXPixel/Vibe/proto/auth"
 	//authgrpc "buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go/auth/authgrpc"
-	authgrpc "buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go/auth/authgrpc"
+
+	"github.com/DarkXPixel/Vibe/services/auth-service/internal/bootstrap"
 	"github.com/DarkXPixel/Vibe/services/auth-service/internal/config"
-	"github.com/DarkXPixel/Vibe/services/auth-service/internal/database"
-	"github.com/DarkXPixel/Vibe/services/auth-service/internal/handler"
 	"github.com/DarkXPixel/Vibe/services/auth-service/internal/repository"
 	"github.com/DarkXPixel/Vibe/services/auth-service/internal/service"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"google.golang.org/grpc"
-
-	envoyauth "github.com/envoyproxy/go-control-plane/envoy/service/auth/v3"
+	//"github.com/DarkXPixel/Vibe/services/auth-service/internal/handler"
 )
 
 type App struct {
+	config     *config.Config
 	grpcServer *grpc.Server
-	//authServer *internal.AuthServer
-	_authService service.AuthService
-	handler      *handler.AuthHandler
-	log          *slog.Logger
-	config       *config.Config
-	db           *pgxpool.Pool
-	redis        repository.RedisRepository
-	userClient   repository.UserClient
+	service    *service.AuthService
+	postgres   *repository.Postgres
+	redis      *repository.Redis
+	keys       *bootstrap.ServerKeys
+	// //authServer *internal.AuthServer
+	// _authService service.AuthService
+	// handler      *handler.AuthHandler
+	log *slog.Logger
+	// config       *config.Config
+	// db           *pgxpool.Pool
+	// redis        repository.RedisRepository
+	// userClient   repository.UserClient
 }
 
 func initApp() (*App, error) {
+	ctx := context.Background()
 	var app App
 	conf, err := config.LoadConfig()
 	if err != nil {
 		return nil, fmt.Errorf("error load config: %w", err)
 	}
+
 	app.config = conf
+	app.keys = bootstrap.MustLoadServerKeys()
 
 	for i := 0; i < 30; i++ {
-		db, err := database.ConnectDB(conf.DB)
+		db, err := repository.NewPostgres(ctx, fmt.Sprintf(
+			"postgres://%s:%s@%s:%s/%s?sslmode=%s",
+			conf.DB.User,
+			conf.DB.Password,
+			conf.DB.Host,
+			conf.DB.Port,
+			conf.DB.DBName,
+			conf.DB.SSLMode))
 		if err == nil {
-			app.db = db
+			app.postgres = db
 			log.Println("PostgreSQL is ready")
 			break
 		}
 		log.Printf("Attempt %d/%d: PostgreSQL not ready (%s)", i, 29, err.Error())
 		time.Sleep(2 * time.Second)
 	}
-	if app.db == nil {
+	if app.postgres == nil {
 		return nil, fmt.Errorf("postgreSQL is not ready")
 	}
 
-	app.redis = repository.NewRedisRepository(&conf.Redis)
-	if err := app.redis.PingRedis(context.Background()); err != nil {
-		return nil, fmt.Errorf("error connect redis: %w", err)
-	}
-	//creds, err := credentials.NewClientTLSFromCert()
-
-	userClient, err := repository.NewUserClient(fmt.Sprintf("%s:%s", app.config.UserService.Host, app.config.UserService.Port))
-	if err != nil {
-		return nil, fmt.Errorf("error connect user-service:%w", err)
-	}
-
-	app.userClient = userClient
-	app.grpcServer = grpc.NewServer()
-	app._authService = service.NewAuthSevice(app.redis, &conf.JWT, app.db, app.userClient)
-	app.handler = handler.NewAuthHandler(app._authService)
-
-	//auth.RegisterAuthServiceServer(app.grpcServer, app.authService)
-	authgrpc.RegisterAuthServiceServer(app.grpcServer, app.handler)
-	envoyauth.RegisterAuthorizationServer(app.grpcServer, app.handler)
-
-	app.log = slog.New(slog.NewTextHandler(os.Stdout, nil))
-	slog.SetDefault(app.log)
+	app.redis = repository.NewRedis(fmt.Sprintf("%s:%s", conf.Redis.Host, conf.Redis.Port), conf.Redis.Password, 0)
+	app.service = service.NewAuthService(app.postgres, app.redis, app.keys.Priv, app.keys.Pub, nil)
 
 	return &app, nil
 }
@@ -130,54 +122,4 @@ func main() {
 	<-stop
 
 	app.stop()
-
-	// conf, err := config.LoadConfig()
-	// if err != nil {
-	// 	log.Fatalf("error load config: %v", err)
-	// }
-
-	// log.Print(conf)
-
-	// lis, err := net.Listen("tcp", ":50051")
-	// if err != nil {
-	// 	log.Fatalf("Failed to listen: %v", err)
-	// }
-
-	// grpcServer := grpc.NewServer()
-
-	// authServer := internal.NewAuthServer(nil, nil)
-
-	// authpb.RegisterAuthServiceServer(grpcServer, authServer)
-
-	// log.Println("Auth service listening on :50051")
-	// if err := grpcServer.Serve(lis); err != nil {
-	// 	log.Fatalf("Failed to serve: %v", err)
-	// }
-
-	// cfg := internal.LoadConfig()
-	// err := internal.RunMigrate(cfg.DatabaseURL)
-	// if err != nil {
-	// 	log.Fatalf("Migration is NOT OK: %v", err)
-	// }
-	// db, err := internal.ConnectDB(cfg.DatabaseURL)
-	// if err != nil {
-	// 	log.Fatalf("Failed to connect to DB: %v", err)
-	// }
-	// defer db.Close()
-
-	// lis, err := net.Listen("tcp", ":50051")
-	// if err != nil {
-	// 	log.Fatalf("Failed to listen: %v", err)
-	// }
-
-	// grpcServer := grpc.NewServer()
-
-	// authServer := internal.NewAuthServer(db, cfg)
-
-	// authpb.RegisterAuthServiceServer(grpcServer, authServer)
-
-	// log.Println("Auth service listening on :50051")
-	// if err := grpcServer.Serve(lis); err != nil {
-	// 	log.Fatalf("Failed to serve: %v", err)
-	// }
 }

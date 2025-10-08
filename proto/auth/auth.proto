@@ -6,9 +6,8 @@ option go_package = "github.com/DarkXPixel/Vibe/proto/auth";
 
 service AuthService {
     rpc SendVerificationCode(PhoneNumberRequest) returns (SendCodeResponse);
-    rpc VerifyCode(VerifyCodeRequest) returns (AuthResponse);
+    rpc VerifyCode(VerifyCodeRequest) returns (VerifyCodeRespone);
     rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenRespone);
-    //rpc ValidateToken(TokenRequest) returns (UserSession);
 }
 
 message PhoneNumberRequest {
@@ -16,35 +15,88 @@ message PhoneNumberRequest {
 }
 
 message SendCodeResponse {
-    string message = 1;
-    bool success = 2;
-    string token = 3;
+    string challenge_id = 1;
+    int32 retry_after_seconds = 2;
 }
 
 message VerifyCodeRequest {
-    string phone_number = 1;
-    string code = 2;
-    string token = 3;
+    string challenge_id = 1;
+    string otp_code = 2;
+    bytes device_pub_x25519 = 3;
+    string device_name = 4;
+    string device_platform = 5;
+}
+
+message VerifyCodeRespone {
+    string user_id = 1;
+    string device_id = 2;
+    uint64 auth_key_id = 3;
+    string session_id = 4;
+    uint64 salt = 5;
+    bytes server_pub_x25519 = 6;
+}
+
+message ReconnectRequest {
+    uint64 auth_key_id = 1;
+    string session_id = 2;
+    bytes nonce = 3; // 12 bytes
+    uint64 message_id = 4;
+    uint32 seq_no = 5;
+    bytes aad = 6; 
+    bytes ciphertext = 7;
+}
+
+message ReconnectResponse {
+    bool ok = 1;
+    int64 server_ts = 2;
+    bool rotate_hint = 3;
+}
+
+message ListSessionRequest {
+    int64 user_id = 1;
+}
+
+message DeviceSession {
+    string device_id = 1;
+    uint64 auth_key_id = 2;
+    string session_id = 3;
+    string device_name = 4;
+    string device_platform = 5;
+    string created_at = 6;
+    int64 last_seen = 7;
+    string status = 8; // active|revoked|expired
+}
+
+message RevokeSessionRequest {
+    string session_id = 1;
+    string reason = 2;
+}
+
+message RevokeSessionResponse {
+    bool ok = 1;
+}
+message RevokeAuthKeyRequest { 
+    uint64 auth_key_id = 1;
+    string reason = 2; 
+}
+message RevokeAuthKeyResponse { 
+    bool ok = 1;
+}
+
+message ListSessionResponse {
+    repeated DeviceSession sessions = 1;
 }
 
 message ValidateTokenRequest {
-    string token = 1;
+    uint64 auth_key_id = 1;
+    string session_id = 2;
 }
 
 message ValidateTokenRespone {
-    bool success = 1;
+    bool valid = 1;
     string user_id = 2;
+    string status = 3;
+    string device_platform = 4;
+    string device_name = 5;
+    int64 last_seen = 6;
 }
-
-message AuthResponse {
-    bool success = 1;
-    string auth_token = 2;
-    string user_id = 3;
-    string message = 4;
-}
-
-// message UserSession {
-//     string user_id = 1;
-//     string username = 2;
-//     bool is_valid = 3;
-// }
