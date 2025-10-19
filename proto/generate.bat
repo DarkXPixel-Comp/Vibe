@@ -1,0 +1,2 @@
+protoc --go_out=paths=source_relative:. --go-grpc_out=paths=source_relative:. --proto_path=. chat/chat.proto user/user.proto auth/auth.proto common/types.proto message/message.proto sync/sync.proto
+protoc --dart_out=grpc:../frontend/vibe/lib/generated --proto_path=. chat/chat.proto user/user.proto auth/auth.proto common/types.proto message/message.proto sync/sync.proto

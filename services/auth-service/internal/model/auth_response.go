@@ -1,7 +1,6 @@
 package model
 
 type AuthResponse struct {
-	AccessToken  string
-	RefreshToken string
-	UserID       string
+	Token   string
+	User_id string
 }

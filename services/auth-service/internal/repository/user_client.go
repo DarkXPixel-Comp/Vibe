@@ -10,15 +10,11 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type UserClient interface {
-	GetOrCreateUser(ctx context.Context, phone string) (*userproto.User, error)
-}
-
-type userClient struct {
+type UserClient struct {
 	client usergrpc.UserServiceClient
 }
 
-func NewUserClient(userServiceAddr string) (UserClient, error) {
+func NewUserClient(userServiceAddr string) (*UserClient, error) {
 	conn, err := grpc.NewClient(userServiceAddr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithIdleTimeout(60*time.Second))
@@ -26,15 +22,12 @@ func NewUserClient(userServiceAddr string) (UserClient, error) {
 		return nil, err
 	}
 
-	return &userClient{
+	return &UserClient{
 		client: usergrpc.NewUserServiceClient(conn),
 	}, nil
 }
 
-func (uc *userClient) GetOrCreateUser(ctx context.Context, phone string) (*userproto.User, error) {
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-	defer cancel()
-
+func (uc *UserClient) GetOrCreateUser(ctx context.Context, phone string) (*userproto.User, error) {
 	resp, err := uc.client.GetOrCreateUser(ctx, &userproto.GetOrCreateUserRequest{Phone: phone})
 	if err != nil {
 		return nil, err
