@@ -12,7 +12,6 @@ import (
 	chatgrpc "buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go/chat/chatgrpc"
 	"github.com/DarkXPixel/Vibe/services/chat-service/internal/config"
 	"github.com/DarkXPixel/Vibe/services/chat-service/internal/handler"
-	"github.com/DarkXPixel/Vibe/services/chat-service/internal/interceptor"
 	"github.com/DarkXPixel/Vibe/services/chat-service/internal/repository"
 	"github.com/DarkXPixel/Vibe/services/chat-service/internal/service"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -21,16 +20,15 @@ import (
 )
 
 type App struct {
-	grpcServer      *grpc.Server
-	db              *pgxpool.Pool
-	config          *config.Config
-	authConn        *grpc.ClientConn
-	authClient      authgrpc.AuthServiceClient
-	authInterceptor *interceptor.AuthInterceptor
-	handler         *handler.ChatHandler
-	chatRepository  *repository.ChatRepository
-	chatService     *service.ChatService
-	log             *slog.Logger
+	grpcServer     *grpc.Server
+	db             *pgxpool.Pool
+	config         *config.Config
+	authConn       *grpc.ClientConn
+	authClient     authgrpc.AuthServiceClient
+	handler        *handler.ChatGRPCHandler
+	chatRepository *repository.ChatRepository
+	chatService    *service.ChatService
+	log            *slog.Logger
 }
 
 func initApp() (*App, error) {
@@ -41,7 +39,7 @@ func initApp() (*App, error) {
 	}
 	app.config = conf
 
-	db, err := repository.ConnectDB(&app.config.Postgresql)
+	db, err := repository.ConnectDB(&app.config.DB)
 	if err != nil {
 		return nil, fmt.Errorf("failed connect db: %s", err)
 	}
@@ -58,12 +56,11 @@ func initApp() (*App, error) {
 
 	app.authConn = authConn
 	app.authClient = authgrpc.NewAuthServiceClient(authConn)
-	app.authInterceptor = interceptor.NewAuthInterceptor(app.authClient)
 
-	app.grpcServer = grpc.NewServer(grpc.UnaryInterceptor(app.authInterceptor.Unary()))
-	chat_service := service.NewChatService(*app.chatRepository)
-	app.chatService = &chat_service
-	app.handler = handler.NewChatHandler(*app.chatService)
+	app.grpcServer = grpc.NewServer()
+	chat_service := service.NewChatService(app.chatRepository)
+	app.chatService = chat_service
+	app.handler = handler.NewChatGRPCHandler(chat_service)
 
 	chatgrpc.RegisterChatServiceServer(app.grpcServer, app.handler)
 
@@ -78,10 +75,10 @@ func (a *App) run() error {
 
 	log := a.log.With(
 		slog.String("op", op),
-		slog.Int("port", a.config.GRPCConfig.Port),
+		slog.Int("port", a.config.GRPC.Port),
 	)
 
-	l, err := net.Listen("tcp", fmt.Sprintf(":%d", a.config.GRPCConfig.Port))
+	l, err := net.Listen("tcp", fmt.Sprintf(":%d", a.config.GRPC.Port))
 	if err != nil {
 		return fmt.Errorf("fail listen: %w", err)
 	}

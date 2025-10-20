@@ -11,10 +11,13 @@ build:
       secrets:
         - id: buf_token
           env: BUF_TOKEN
-  # - image: vibe/user-service
-  #   context: .
-  #   docker:
-  #     dockerfile: services/user-service/Dockerfile
+  - image: vibe/user-service
+    context: ./services/user-service
+    docker:
+      dockerfile: Dockerfile
+      secrets:
+        - id: buf_token
+          env: BUF_TOKEN
   local:
     push: false
     useBuildkit: true
@@ -28,7 +31,13 @@ deploy:
         chartPath: helm/services/auth-service
         namespace: auth
         createNamespace: true
-      # - name: user-service
-      #   chartPath: helm/services/user-service
-      #   namespace: user
-      #   createNamespace: true
+        setValueTemplates:
+          #image: "{{ .IMAGE_FULLY_QUALIFIED_NAME }}"
+          # image.tag: "sha256:{{.DIGEST_HEX}}"
+       
+      - name: user-service
+        chartPath: helm/services/user-service
+        namespace: user
+        createNamespace: true
+        # setValueTemplates:
+        #   image.tag: "{{.DIGEST_HEX}}"

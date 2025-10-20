@@ -73,7 +73,7 @@ func (s *AuthHandler) ValidateToken(ctx context.Context, req *authproto.Validate
 	//s.service.ValidateToken(ctx)
 	user_id, err := s.service.ValidateToken(ctx, req.GetToken())
 	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "invalid token")
+		return nil, status.Errorf(codes.NotFound, "invalid token: %v", err)
 	}
 
 	return &authproto.ValidateTokenRespone{
@@ -117,6 +117,7 @@ func (s *AuthHandler) Check(ctx context.Context, req *envoyauth.CheckRequest) (*
 						},
 					},
 				},
+				HeadersToRemove: []string{"auauthorizationth"},
 			},
 		},
 	}, nil

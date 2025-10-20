@@ -4,21 +4,34 @@ import (
 	"time"
 )
 
-type ChatType int32
+type ChatType string
 
 const (
-	ChatType_PRIVATE ChatType = 0
-	ChatType_GROUP   ChatType = 1
-	ChatType_CHANNEL ChatType = 2
+	ChatTypePrivate ChatType = "private"
+	ChatTypeGroup   ChatType = "group"
+	ChatTypeChannel ChatType = "channel"
 )
 
 type Chat struct {
-	ID          string
-	Type        ChatType
-	Title       string
-	CreatorID   string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	UserIds     []string
-	MemberCount int32
+	ID           string
+	Type         ChatType
+	Title        *string
+	Description  *string
+	CreatedAt    time.Time
+	LastActivity time.Time
+}
+
+type Membership struct {
+	ChatID   string
+	UserID   string
+	Role     string
+	JoinedAt time.Time
+}
+
+type CreateChatParams struct {
+	CallerUserID string
+	Type         ChatType
+	Title        *string
+	Description  *string
+	UserIDs      []string
 }

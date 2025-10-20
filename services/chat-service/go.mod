@@ -3,9 +3,8 @@ module github.com/DarkXPixel/Vibe/services/chat-service
 go 1.24.4
 
 require (
-	buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go v1.5.1-20251004092115-2b64804568a0.2
-	buf.build/gen/go/darkxpixel/vibe-contracts/protocolbuffers/go v1.36.10-20251004092115-2b64804568a0.1
-	github.com/DarkXPixel/Vibe/proto v0.0.0-20250710161959-9f344ce6181d
+	buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go v1.5.1-20251020140137-be3c1b36b954.2
+	buf.build/gen/go/darkxpixel/vibe-contracts/protocolbuffers/go v1.36.10-20251020140137-be3c1b36b954.1
 	github.com/caarlos0/env/v9 v9.0.0
 	github.com/go-playground/validator/v10 v10.27.0
 	github.com/jackc/pgx/v5 v5.7.5
@@ -19,8 +18,10 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
+	github.com/jackc/pgx v3.6.2+incompatible // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
 	golang.org/x/crypto v0.37.0 // indirect
 	golang.org/x/net v0.38.0 // indirect

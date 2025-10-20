@@ -8,8 +8,22 @@ service AuthService {
     rpc SendVerificationCode(PhoneNumberRequest) returns (SendCodeResponse);
     rpc VerifyCode(VerifyCodeRequest) returns (AuthResponse);
     rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenRespone);
+  //  rpc GetSessions(GetSessionsRequest);
     //rpc ValidateToken(TokenRequest) returns (UserSession);
 }
+
+// message GetSessionsRequest {
+// }
+
+// message GetSessionsResponse {
+
+// }
+
+// message Session {
+//     string session_id = 1;
+//     string created_at = 2;
+//     string expires_at = 3;
+// }
 
 message PhoneNumberRequest {
     string phone_number = 1;
@@ -42,9 +56,3 @@ message AuthResponse {
     string user_id = 3;
     string message = 4;
 }
-
-// message UserSession {
-//     string user_id = 1;
-//     string username = 2;
-//     bool is_valid = 3;
-// }

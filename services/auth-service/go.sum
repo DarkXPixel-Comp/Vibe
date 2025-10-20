@@ -1,7 +1,7 @@
-buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go v1.5.1-20251004092115-2b64804568a0.2 h1:EBkbfquPQIZo9x2ng8QDDRCSXnB0vw1e8yQl69QUdl4=
-buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go v1.5.1-20251004092115-2b64804568a0.2/go.mod h1:zsPqjkWoIVT7qixfuu9uaVx+nWqupUVIestd9PXC98Y=
-buf.build/gen/go/darkxpixel/vibe-contracts/protocolbuffers/go v1.36.1-20251004092115-2b64804568a0.1 h1:7CRoFANA0PDOTYpIUW/Miunh65An77aXuHxR+lDtYNM=
-buf.build/gen/go/darkxpixel/vibe-contracts/protocolbuffers/go v1.36.1-20251004092115-2b64804568a0.1/go.mod h1:yq+y2uYlQq+hX3eaqGDEvPAZxLWVHAKjUpFpC/hJNBg=
+buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go v1.5.1-20251019155948-4669f730d927.2 h1:eMRrhUnzBcHQD+SobQIguXI/QjDdZ9uZ/mqdeSvoxjM=
+buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go v1.5.1-20251019155948-4669f730d927.2/go.mod h1:7ikSVL44ZBAm1yIdfKN65ryD196kxiXMQU7fFShOPpo=
+buf.build/gen/go/darkxpixel/vibe-contracts/protocolbuffers/go v1.36.1-20251019155948-4669f730d927.1 h1:Vw44AY7X7Rfb+WcyTFgUTrlb/wxPQHCImnwXy4k6q1I=
+buf.build/gen/go/darkxpixel/vibe-contracts/protocolbuffers/go v1.36.1-20251019155948-4669f730d927.1/go.mod h1:yq+y2uYlQq+hX3eaqGDEvPAZxLWVHAKjUpFpC/hJNBg=
 github.com/bsm/ginkgo/v2 v2.12.0 h1:Ny8MWAHyOepLGlLKYmXG4IEkioBysk6GpaRTLC8zwWs=
 github.com/bsm/ginkgo/v2 v2.12.0/go.mod h1:SwYbGRRDovPVboqFv0tPTcG1sN61LM1Z4ARdbAV9g4c=
 github.com/bsm/gomega v1.27.10 h1:yeMWxP2pV2fG3FgAODIY8EiRE3dy0aeFYt4l7wh6yKA=

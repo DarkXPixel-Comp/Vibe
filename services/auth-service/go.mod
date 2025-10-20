@@ -8,8 +8,8 @@ go 1.24.4
 // )
 
 require (
-	buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go v1.5.1-20251004092115-2b64804568a0.2
-	buf.build/gen/go/darkxpixel/vibe-contracts/protocolbuffers/go v1.36.1-20251004092115-2b64804568a0.1
+	buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go v1.5.1-20251019155948-4669f730d927.2
+	buf.build/gen/go/darkxpixel/vibe-contracts/protocolbuffers/go v1.36.1-20251019155948-4669f730d927.1
 	github.com/caarlos0/env/v9 v9.0.0
 	github.com/envoyproxy/go-control-plane/envoy v1.32.4
 	github.com/go-playground/validator/v10 v10.27.0

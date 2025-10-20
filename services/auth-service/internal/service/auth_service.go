@@ -85,24 +85,20 @@ func (s *authService) VerifyCode(ctx context.Context, token, code string) (*mode
 		return nil, fmt.Errorf("error getorcreateuser: %w", err)
 	}
 
-	var tok, hashedToken string
-	for {
-		tok, err = utils.GenerateToken32()
-		if err != nil {
-			return nil, fmt.Errorf("error generate token: %w", err)
-		}
+	tok, err := utils.GenerateToken32()
+	if err != nil {
+		return nil, fmt.Errorf("error generate token")
+	}
 
-		var id string
-		err := s.db.QueryRow(ctx, `
-			INSERT INTO session_tokens (user_id, token_hash, created_at, last_used_at, revoked)
-			VALUES ($1, $2, NOW(), NOW(), false)
-			ON CONFLICT (token_hash) DO NOTHING
-			RETURNING id`, user.GetUserId(), hashedToken).Scan(&id)
+	hashedToken := utils.HashToken(tok)
 
-		if err == pgx.ErrNoRows {
-			continue
-		}
-		break
+	query := `
+		INSERT INTO session_tokens (user_id, token_hash, created_at, last_used_at, revoked)
+		VALUES ($1, $2, NOW(), NOW(), false)
+	`
+	_, err = s.db.Exec(ctx, query, user.GetUserId(), hashedToken)
+	if err != nil {
+		return nil, fmt.Errorf("failed to save token: %w", err)
 	}
 
 	return &model.AuthResponse{

@@ -9,74 +9,83 @@ import (
 	"github.com/DarkXPixel/Vibe/services/chat-service/internal/model"
 	"github.com/DarkXPixel/Vibe/services/chat-service/internal/service"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
-type ChatHandler struct {
+type ChatGRPCHandler struct {
 	chatgrpc.UnimplementedChatServiceServer
-	chatService service.ChatService
+	chatService *service.ChatService
 }
 
-func NewChatHandler(chatService service.ChatService) *ChatHandler {
-	return &ChatHandler{
+func NewChatGRPCHandler(chatService *service.ChatService) *ChatGRPCHandler {
+	return &ChatGRPCHandler{
 		chatService: chatService,
 	}
 }
 
-func (h *ChatHandler) CreateChat(ctx context.Context, req *chatproto.CreateChatRequest) (*chatproto.CreateChatResponse, error) {
-	if req.GetCreatorId() != ctx.Value("user_id") {
-		return nil, status.Error(codes.PermissionDenied, "you can create chat only for you")
+func (h *ChatGRPCHandler) CreateChat(ctx context.Context, req *chatproto.CreateChatRequest) (*chatproto.CreateChatResponse, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+
+	if !ok {
+		return nil, status.Error(codes.Unauthenticated, "missing metadata")
+	}
+	values := md.Get("x-user-id")
+	if len(values) == 0 {
+		return nil, status.Error(codes.Unauthenticated, "missing x-user-id in metadata")
 	}
 
-	chat, err := h.chatService.CreateChat(ctx, model.ChatType(req.GetType()), req.GetTitle(), req.GetCreatorId(), req.GetUserIds())
-	if err != nil {
-		return &chatproto.CreateChatResponse{
-			Success:      false,
-			ErrorMessage: err.Error(),
-		}, nil
+	callerID := values[0]
+	if callerID == "" {
+		return nil, status.Error(codes.Unauthenticated, "empty x-user-id in metadata")
+	}
+	var ct model.ChatType
+	switch req.Type {
+	case chatproto.ChatType_PRIVATE:
+		ct = model.ChatTypePrivate
+	case chatproto.ChatType_GROUP:
+		ct = model.ChatTypeGroup
+	case chatproto.ChatType_CHANNEL:
+		ct = model.ChatTypeChannel
+	default:
+		return nil, status.Error(codes.InvalidArgument, "invalid chat type")
+	}
+
+	params := model.CreateChatParams{
+		CallerUserID: callerID,
+		Type:         ct,
+		Title:        nilIfEmpty(req.Title),
+		Description:  nil,
+		UserIDs:      req.UserIds,
+	}
+	chat, svcErr := h.chatService.CreateChat(ctx, params)
+	if svcErr != nil {
+		return nil, svcErr
 	}
 
 	return &chatproto.CreateChatResponse{
 		Success: true,
 		Chat: &chatproto.Chat{
-			Id:          chat.ID,
-			Type:        chatproto.ChatType(chat.Type),
-			Title:       chat.Title,
-			CreatorId:   chat.CreatorID,
-			CreatedAt:   chat.CreatedAt.Format(time.RFC3339),
-			UpdatedAt:   chat.UpdatedAt.Format(time.RFC3339),
-			UserIds:     chat.UserIds,
-			MemberCount: chat.MemberCount,
+			Id:             chat.ID,
+			Type:           req.GetType(),
+			Title:          strOrEmpty(chat.Title),
+			CreatedAt:      chat.CreatedAt.UTC().Format(time.RFC3339),
+			LastActivityAt: chat.LastActivity.UTC().Format(time.RFC3339),
 		},
 	}, nil
+
 }
 
-func (h *ChatHandler) GetChats(ctx context.Context, req *chatproto.GetChatsRequest) (*chatproto.GetChatsResponse, error) {
-	if req.GetUserId() != ctx.Value("user_id") {
-		return nil, status.Error(codes.PermissionDenied, "you can get chats only for you")
+func nilIfEmpty(s string) *string {
+	if s == "" {
+		return nil
 	}
+	return &s
+}
 
-	chats, err := h.chatService.GetChats(ctx, req.GetUserId())
-
-	if err != nil {
-		return nil, status.Error(codes.NotFound, "error get chats")
+func strOrEmpty(p *string) string {
+	if p == nil {
+		return ""
 	}
-
-	var protoChats []*chatproto.Chat
-	for _, chat := range chats {
-		protoChats = append(protoChats, &chatproto.Chat{
-			Id:          chat.ID,
-			Type:        chatproto.ChatType(chat.Type),
-			Title:       chat.Title,
-			CreatorId:   chat.CreatorID,
-			CreatedAt:   chat.CreatedAt.Format(time.RFC3339),
-			UpdatedAt:   chat.UpdatedAt.Format(time.RFC3339),
-			UserIds:     chat.UserIds,
-			MemberCount: chat.MemberCount,
-		})
-	}
-
-	return &chatproto.GetChatsResponse{
-		Chats: protoChats,
-	}, nil
+	return *p
 }

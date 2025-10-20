@@ -1,7 +1,7 @@
 # Параметры приложения (Deployment/Service)
 image:
   repository: vibe/auth-service
-  tag: 2e12344-dirty
+  tag: latest
   pullPolicy: IfNotPresent
 
 replicaCount: 1

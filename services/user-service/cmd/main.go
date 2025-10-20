@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/DarkXPixel/Vibe/proto/user"
+	usergrpc "buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go/user/usergrpc"
 	"github.com/DarkXPixel/Vibe/services/user-service/internal/config"
 	"github.com/DarkXPixel/Vibe/services/user-service/internal/handler"
 	"github.com/DarkXPixel/Vibe/services/user-service/internal/repository"
@@ -47,7 +47,7 @@ func initApp() (*App, error) {
 	app.userService = service.NewUserService(user_repository)
 	app.handler = handler.NewUserHandler(app.userService)
 
-	user.RegisterUserServiceServer(app.grpcServer, app.handler)
+	usergrpc.RegisterUserServiceServer(app.grpcServer, app.handler)
 
 	app.log = slog.New(slog.NewTextHandler(os.Stdout, nil))
 	slog.SetDefault(app.log)

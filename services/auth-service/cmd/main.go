@@ -45,14 +45,14 @@ func initApp() (*App, error) {
 	}
 	app.config = conf
 
-	for i := 0; i < 30; i++ {
+	for i := 0; i < 31; i++ {
 		db, err := database.ConnectDB(conf.DB)
 		if err == nil {
 			app.db = db
 			log.Println("PostgreSQL is ready")
 			break
 		}
-		log.Printf("Attempt %d/%d: PostgreSQL not ready (%s)", i, 29, err.Error())
+		log.Printf("Attempt %d/%d: PostgreSQL not ready (%s)", i, 30, err.Error())
 		time.Sleep(2 * time.Second)
 	}
 	if app.db == nil {
