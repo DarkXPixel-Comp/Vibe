@@ -30,7 +30,7 @@ deploy:
       - name: auth-service
         chartPath: helm/services/auth-service
         namespace: auth
-        createNamespace: true
+        createNamespace: false
         setValueTemplates:
           #image: "{{ .IMAGE_FULLY_QUALIFIED_NAME }}"
           # image.tag: "sha256:{{.DIGEST_HEX}}"
@@ -38,4 +38,9 @@ deploy:
       - name: user-service
         chartPath: helm/services/user-service
         namespace: user
+        createNamespace: false
+
+      - name: istio-config
+        chartPath: helm/istio-config
+        namespace: istio-operator
         createNamespace: true
