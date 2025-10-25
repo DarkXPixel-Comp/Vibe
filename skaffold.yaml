@@ -39,5 +39,11 @@ deploy:
         chartPath: helm/services/user-service
         namespace: user
         createNamespace: true
+      - name: istio
+        chartPath: istio/istiod
+        namespace: istio-system
+      # - name: envoy
+      #   chartPath: helm/envoy
+        
         # setValueTemplates:
         #   image.tag: "{{.DIGEST_HEX}}"
