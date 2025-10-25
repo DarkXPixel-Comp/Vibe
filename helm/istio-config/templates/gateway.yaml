@@ -1,0 +1,55 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: vibe-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway # use Istio default gateway implementation
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: user-service-vs
+  namespace: user
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - istio-system/vibe-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /user.UserService/
+    route:
+    - destination:
+        host: user-service.user.svc.cluster.local
+        port:
+          number: 50033
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: auth-service-vs
+  namespace: auth
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - istio-system/vibe-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /auth.AuthService/
+    route:
+    - destination:
+        host: auth-service.auth.svc.cluster.local
+        port:
+          number: 50032

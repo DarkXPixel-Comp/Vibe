@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: istio-system
+---
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  namespace: istio-system
+  name: istio-control-plane
+spec:
+  profile: default
+  hub: istio/operator
+  tag: 1.14.1
+  values:
+    global:
+      proxy:
+        autoInject: enabled
+      useMCP: false
+      # The third-party-jwt is not enabled on all k8s.
+      # The following value is downgraded from the default of true to false.
+      jwtPolicy: first-party-jwt
+
+    pilot:
+      autoscaleEnabled: false
+  meshConfig:
+    extensionProviders:
+    - name: "vibe-auth-provider"
+      envoyExtAuthzGrpc:
+        service: "auth-service.auth.svc.cluster.local"
+        port: "50032"
