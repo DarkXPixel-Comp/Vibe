@@ -1,0 +1,87 @@
+{{- range .Values.services }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .name }}-redis-secret
+  namespace: {{ $.Release.Namespace }}
+type: Opaque
+stringData:
+  username: default
+  password: {{ .password }}
+
+---
+{{- if eq $.Values.mode "replication" }}
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisReplication
+metadata:
+  name: {{ .name }}-redis
+  namespace: {{ $.Release.Namespace }}
+spec:
+  clusterSize: {{ default 1 .replicas }}
+  redisExporter:
+    enabled: true
+    image: "{{ $.Values.redisExporter.image }}"
+  redisConfig:
+  {{- if $.Values.redisConfig.externalConfig }}
+    externalConfig: {{ $.Values.redisConfig.externalConfig | quote }}
+  {{- else if $.Values.redisConfig.additionalRedisConfig }}
+    additionalRedisConfig: |
+{{ trim $.Values.redisConfig.additionalRedisConfig | indent 6 }}
+  {{- else }}
+    additionalRedisConfig: |
+      # no custom redis config
+  {{- end }}
+  kubernetesConfig:
+    image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
+    imagePullPolicy: {{ $.Values.image.pullPolicy }}
+    resources:
+{{ toYaml $.Values.resources | indent 6 }}
+  redisSecret:
+    name: {{ .name }}-redis-secret
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ $.Values.storage.size }}
+        {{- if $.Values.storage.storageClassName }}
+        storageClassName: {{ $.Values.storage.storageClassName }}
+        {{- end }}
+
+{{- else if eq $.Values.mode "cluster" }}
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisCluster
+metadata:
+  name: {{ .name }}-redis-cluster
+  namespace: {{ $.Release.Namespace }}
+spec:
+  clusterSize: {{ default 3 .clusterSize }}
+  redisReplication:
+    replicas: {{ default 2 .replicas }}
+  redisExporter:
+    enabled: true
+    image: "{{ $.Values.redisExporter.image }}"
+  redisConfig:
+    additionalRedisConfig: |
+{{ $.Values.redisConfig.additionalRedisConfig | indent 6 }}
+  kubernetesConfig:
+    image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
+    imagePullPolicy: {{ $.Values.image.pullPolicy }}
+    resources:
+{{ toYaml $.Values.resources | indent 6 }}
+  redisSecret:
+    name: {{ .name }}-redis-secret
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ $.Values.storage.size }}
+        {{- if $.Values.storage.storageClassName }}
+        storageClassName: {{ $.Values.storage.storageClassName }}
+        {{- end }}
+{{- end }}
+{{- end }}

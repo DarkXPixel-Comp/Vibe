@@ -1,0 +1,53 @@
+# ===========================
+# Kuma DEV Configuration
+# ===========================
+
+controlPlane:
+  mode: standalone
+  replicas: 1
+
+  # Храним состояние в SQLite — быстро и просто
+  environment: kubernetes
+  envVars:
+    KUMA_METRICS_ENABLED: "true"
+    KUMA_STORE_TYPE: "memory"
+
+injector:
+  enabled: true
+  failurePolicy: Ignore
+
+
+defaults:
+  skipMeshCreation: false
+  mesh:
+    default:
+      spec:
+        mtls:
+          enabledBackend: ""
+        tracing:
+          defaultBackend: ""
+        logging:
+          defaultBackend: ""
+        metrics:
+          enabledBackend: prometheus-dev
+          backends:
+            - name: prometheus-dev
+              type: prometheus
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Prometheus для локального мониторинга
+prometheus:
+  enabled: true
+
+# В Dev можно оставить SQLite (по умолчанию)
+database:
+  type: memory
+
+# UI доступен снаружи (для localhost)
+apiServer:
+  service:
+    type: NodePort

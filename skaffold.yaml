@@ -2,40 +2,126 @@ apiVersion: skaffold/v4beta6
 kind: Config
 metadata:
   name: vibe
-build:
-  artifacts:
-  - image: vibe/auth-service
-    context: ./services/auth-service
-    docker:
-      dockerfile: Dockerfile
-      secrets:
-        - id: buf_token
-          env: BUF_TOKEN
-  - image: vibe/user-service
-    context: ./services/user-service
-    docker:
-      dockerfile: Dockerfile
-      secrets:
-        - id: buf_token
-          env: BUF_TOKEN
-  local:
-    push: false
-    useBuildkit: true
-  tagPolicy:
-    gitCommit: {}
+profiles:
+  - name: infra
+    deploy:
+      helm:
+        releases:
+          - name: foundation
+            chartPath: ./helm/foundation
+            namespace: kube-system
 
-deploy:
-  helm:
-    releases:
-      - name: auth-service
-        chartPath: helm/services/auth-service
-        namespace: auth
-        createNamespace: true
-        setValueTemplates:
-          #image: "{{ .IMAGE_FULLY_QUALIFIED_NAME }}"
-          # image.tag: "sha256:{{.DIGEST_HEX}}"
-       
-      - name: user-service
-        chartPath: helm/services/user-service
-        namespace: user
-        createNamespace: true
+          - name: kuma
+            namespace: kuma-system
+            remoteChart: kuma
+            #chartPath: kuma
+            repo: https://kumahq.github.io/charts
+            version: 2.12.3
+            valuesFiles:
+              - ./helm/kuma/environments/dev-values.yaml
+          
+          - name: cnpg
+            namespace: cnpg
+            createNamespace: true
+            remoteChart: cloudnative-pg
+            repo: https://cloudnative-pg.github.io/charts
+            version: 0.26.1
+            wait: true            
+
+          - name: postgres
+            namespace: infra
+            createNamespace: false
+            chartPath: ./helm/infra/postgres
+            wait: true
+            valuesFiles:
+              - ./helm/infra/postgres/values.yaml
+
+          - name: cert-manager
+            namespace: cert-manager
+            createNamespace: true
+            remoteChart: cert-manager
+            repo: https://charts.jetstack.io
+            version: v1.19.1
+            setValues:
+              installCRDs: true
+            wait: true
+
+          - name: scylla-operator
+            namespace: scylla-operator
+            createNamespace: true
+            remoteChart: scylla-operator
+            repo: https://scylla-operator-charts.storage.googleapis.com/stable
+            version: 1.17.0
+            wait: true
+            setValues:
+              rbac:
+                create: true
+              webhook:
+                enabled: true
+
+          # - name: scylla
+          #   namespace: infra
+          #   createNamespace: false
+          #   chartPath: ./helm/infra/scylla
+          #   valuesFiles:
+          #     - ./helm/infra/scylla/values.yaml
+          #   wait: true
+
+          - name: redis-operator
+            namespace: redis-system
+            repo: https://ot-container-kit.github.io/helm-charts
+            remoteChart: redis-operator
+            version: 0.22.2
+            createNamespace: true
+            wait: true
+
+          - name: redis
+            namespace: infra
+            createNamespace: false
+            chartPath: ./helm/infra/redis
+            valuesFiles:
+              - ./helm/infra/redis/values.yaml
+            wait: true
+            
+  - name: dev
+    build:
+      artifacts:
+      - image: vibe/auth-service
+        context: ./services/auth-service
+        docker:
+          dockerfile: Dockerfile
+          secrets:
+            - id: buf_token
+              env: BUF_TOKEN
+      - image: vibe/user-service
+        context: ./services/user-service
+        docker:
+          dockerfile: Dockerfile
+          secrets:
+            - id: buf_token
+              env: BUF_TOKEN
+      - image: vibe/chat-service
+        context: ./services/chat-service
+        docker:
+          dockerfile: Dockerfile
+          secrets:
+            - id: buf_token
+              env: BUF_TOKEN
+      local:
+        push: false
+        useBuildkit: true
+      tagPolicy:
+        envTemplate:
+          template: "dev"
+    deploy:
+      helm:
+        releases:
+          - name: auth-service
+            chartPath: helm/services/auth-service
+            namespace: auth
+            createNamespace: false
+
+          # - name: user-service
+          #   chartPath: helm/services/user-service
+          #   namespace: user
+          #   createNamespace: false

@@ -1,7 +1,7 @@
 # Параметры приложения (Deployment/Service)
 image:
   repository: vibe/user-service
-  tag: latest
+  tag: dev
   pullPolicy: IfNotPresent
 
 replicaCount: 1

@@ -1,0 +1,34 @@
+mode: replication
+
+services:
+  - name: auth
+    replicas: 1
+    password: "authRedisPass"
+  - name: user
+    replicas: 1
+    password: "userRedisPass"
+  - name: chat
+    replicas: 1
+    password: "chatRedisPass"
+
+image:
+  repository: quay.io/opstree/redis
+  tag: "v8.2.2"
+  pullPolicy: IfNotPresent
+
+redisExporter:
+  image: quay.io/opstree/redis-exporter:1.0
+
+redisConfig:
+  externalConfig: redis-config
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+storage:
+  size: 1Gi

@@ -1,0 +1,6 @@
+# meshConfig:
+#   extensionProviders:
+#   - name: authz-grpc
+#     envoyExtAuthzGrpc:
+#       service: auth-service.grpc-services.svc.cluster.local
+#       port: 50032

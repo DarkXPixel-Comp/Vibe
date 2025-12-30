@@ -124,15 +124,15 @@ func (s *authService) ValidateToken(ctx context.Context, token string) (string, 
 	err := row.Scan(&tokenData.UserID, &tokenData.LastUsedAt, &tokenData.Revoked)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return "", status.Error(codes.InvalidArgument, "invalid token")
+			return "", status.Errorf(codes.InvalidArgument, "invalid token %s", err.Error())
 		}
 		return "", status.Errorf(codes.Internal, "error db: %s", err.Error())
 	}
 	if tokenData.Revoked {
-		return "", status.Error(codes.InvalidArgument, "invalid token")
+		return "", status.Error(codes.InvalidArgument, "invalid token: revoked")
 	}
 	if time.Since(tokenData.LastUsedAt) > 7*24*time.Hour {
-		return "", status.Error(codes.InvalidArgument, "invalid token")
+		return "", status.Error(codes.InvalidArgument, "invalid token expired")
 	}
 	updateQuery := `
 		UPDATE session_tokens

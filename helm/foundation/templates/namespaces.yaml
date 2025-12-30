@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: auth
+  labels:
+    kuma.io/sidecar-injection: "enabled"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: user
+  labels:
+    kuma.io/sidecar-injection: "enabled"
+
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: chat
+  labels:
+    kuma.io/sidecar-injection: "enabled"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: infra

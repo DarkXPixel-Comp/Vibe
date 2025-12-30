@@ -1,0 +1,13 @@
+# apiVersion: networking.istio.io/v1beta1
+# kind: VirtualService
+# metadata:
+#   name: auth-mesh
+#   namespace: auth
+# spec:
+#   hosts:
+#     - auth-service.auth.svc.cluster.local
+#   http:
+#     - route:
+#         - destination:
+#             host: auth-service.auth.svc.cluster.local
+#             subset: v1

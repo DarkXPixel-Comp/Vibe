@@ -1,7 +1,7 @@
 # Параметры приложения (Deployment/Service)
 image:
   repository: vibe/auth-service
-  tag: latest
+  tag: dev
   pullPolicy: IfNotPresent
 
 replicaCount: 1
@@ -11,7 +11,7 @@ service:
   port: 50032
 
 redis:
-  password: redis
+  password: authRedisPass
   secretName: redis-secret
 
 config:
@@ -21,20 +21,20 @@ config:
     GRPC_PORT: 50032
     USER_SERVICE_HOST: user-service.user.svc.cluster.local
     USER_SERVICE_PORT: "50033"
-    DATABASE_HOST: auth-pg-rw
+    DATABASE_HOST: dark-pg-rw.infra.svc.cluster.local
     DATABASE_PORT: "5432"
     DATABASE_SSLMODE: disable
     DATABASE_USER: auth_user
-    DATABASE_DBNAME: auth-db
-    REDIS_HOST: auth-redis-leader
+    DATABASE_DBNAME: auth
+    REDIS_HOST: auth-redis-master.infra.svc.cluster.local
     REDIS_PORT: "6379"
 
 
 db:
   username: auth_user
-  password: postgres 
+  password: auth_password 
   secretName: auth-db-secret
-  database: auth-db
+  database: auth
 
 migrations:
   enabled: true
@@ -43,47 +43,47 @@ migrations:
 
 
 # Конфиг сабчарта postgres-cluster
-postgres-cluster:
-  clusterName: auth-pg
-  namespace: auth
-  instances: 1
-  storage:
-    size: 2Gi
-  roles:
-    - name: auth_user
-      passwordSecret: auth-db-secret
-  database:
-    enabled: true
-    name: auth-db
-    owner: auth_user
-  expose:
-    rw:
-      enabled: false 
+# postgres-cluster:
+#   clusterName: auth-pg
+#   namespace: auth
+#   instances: 1
+#   storage:
+#     size: 2Gi
+#   roles:
+#     - name: auth_user
+#       passwordSecret: auth-db-secret
+#   database:
+#     enabled: true
+#     name: auth-db
+#     owner: auth_user
+#   expose:
+#     rw:
+#       enabled: false 
 
-redis-cluster:
-  clusterName: auth-redis
-  namespace: auth
-  instances: 1                # для dev можно 1, для prod — 3+
-  storage:
-    size: 512Mi
-    storageClass: ""          # если пусто — возьмется по умолчанию
-  auth:
-    enabled: true
-    passwordSecret: auth-redis-secret
-    password: myRedisPass123  # в проде лучше задавать через секрет
-  expose:
-    leader:
-      enabled: true
-      type: LoadBalancer
-      port: 6379
-      annotations:
-        service.beta.kubernetes.io/aws-load-balancer-type: nlb
-    follower:
-      enabled: false
-      type: NodePort
-      port: 30079
-      annotations: {}
+# redis-cluster:
+#   clusterName: auth-redis
+#   namespace: auth
+#   instances: 1                # для dev можно 1, для prod — 3+
+#   storage:
+#     size: 512Mi
+#     storageClass: ""          # если пусто — возьмется по умолчанию
+#   auth:
+#     enabled: true
+#     passwordSecret: auth-redis-secret
+#     password: myRedisPass123  # в проде лучше задавать через секрет
+#   expose:
+#     leader:
+#       enabled: true
+#       type: LoadBalancer
+#       port: 6379
+#       annotations:
+#         service.beta.kubernetes.io/aws-load-balancer-type: nlb
+#     follower:
+#       enabled: false
+#       type: NodePort
+#       port: 30079
+#       annotations: {}
 
-  metrics:
-    enabled: false
+#   metrics:
+#     enabled: false
 

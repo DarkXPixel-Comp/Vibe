@@ -1,0 +1,11 @@
+# apiVersion: networking.istio.io/v1beta1
+# kind: DestinationRule
+# metadata:
+#   name: user-service-dr
+#   namespace: user
+# spec:
+#   host: user-service.user.svc.cluster.local
+#   trafficPolicy:
+#     connectionPool:
+#       http:
+#         h2UpgradePolicy: UPGRADE   # заставляем Envoy использовать HTTP/2

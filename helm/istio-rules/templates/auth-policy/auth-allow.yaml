@@ -1,0 +1,18 @@
+# apiVersion: security.istio.io/v1beta1
+# kind: AuthorizationPolicy
+# metadata:
+#   name: auth-allow-listed
+#   namespace: authpolicy
+# spec:
+#   selector:
+#     matchLabels:
+#       app: auth-service
+#   rules:
+#   - from:
+#     - source:
+#         namespaces: ["istio-system"]   # ingress-gateway (prod)
+#     to:
+#     - operation:
+#         paths: ["/auth.AuthService/SendVerificationCode",
+#                 "/auth.AuthService/VerifyCode",
+#                 "/auth.AuthService/ValidateToken"]

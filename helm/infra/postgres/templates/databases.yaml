@@ -1,0 +1,14 @@
+{{- range .Values.databases }}
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: {{ .name }}
+  namespace: {{ $.Values.namespace | default "infra" }}
+spec:
+  cluster:
+    name: {{ $.Values.cluster.name }}
+  name: {{ .name }}
+  owner: {{ .user }}
+---
+{{- end }}

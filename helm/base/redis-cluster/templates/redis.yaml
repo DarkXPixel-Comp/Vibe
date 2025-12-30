@@ -8,6 +8,8 @@ spec:
   kubernetesConfig:
     image: "{{ .Values.imageName | default "quay.io/opstree/redis:v8.2.1" }}"
     imagePullPolicy: IfNotPresent
+    podAnnotations:
+      sidecar.istio.io/inject: "false"
   persistence:
     enabled: true
     size: {{ .Values.storage.size }}

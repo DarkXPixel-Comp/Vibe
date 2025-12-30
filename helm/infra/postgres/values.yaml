@@ -1,0 +1,26 @@
+namespace: infra
+
+cluster:
+  name: dark-pg
+  image: ghcr.io/cloudnative-pg/postgresql:16.2
+  instances: 1
+  storage:
+    size: 1Gi
+
+databases:
+  - name: auth
+    user: auth_user
+    password: "auth_password"
+  - name: chat
+    user: chat_user
+    password: "chat_password"
+  - name: user
+    user: user_user
+    password: "user_password"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+sidecarInjection: false

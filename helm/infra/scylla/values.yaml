@@ -1,0 +1,31 @@
+cluster:
+  name: dark-scylla
+  version: 6.2.2
+  datacenter:
+    name: dc1
+    racks:
+      - name: rack1
+        members: 1
+        storage:
+          capacity: 5Gi
+        resources:
+          requests:
+            cpu: 1
+            memory: 2Gi
+          limits:
+            cpu: 1
+            memory: 2Gi
+        scyllaArgs:
+          - "--smp=1"
+          - "--memory=2048M"
+          - "--overprovisioned"
+          - "--developer-mode=1"
+
+agent:
+  enabled: true
+
+monitoring:
+  enabled: false
+
+service:
+  type: ClusterIP

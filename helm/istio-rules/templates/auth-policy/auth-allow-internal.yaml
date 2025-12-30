@@ -1,0 +1,17 @@
+# apiVersion: security.istio.io/v1beta1
+# kind: AuthorizationPolicy
+# metadata:
+#   name: auth-internal-allow
+#   namespace: authpolicy
+# spec:
+#   selector:
+#     matchLabels:
+#       app: auth-service
+#   action: ALLOW
+#   rules:
+#   - from:
+#     - source:
+#         namespaces: ["auth", "user"]   # ваши внутренние сервисы
+#     to:
+#     - operation:
+#         methods: ["*"]

@@ -1,0 +1,40 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: ingress-routing
+  namespace: istio-system
+spec:
+  hosts:
+    #- "api.example.com"
+    #- "grpc.example.com"
+  - "*"  
+  gateways:
+  - api-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /auth.AuthService/VerifyCode
+    - uri:
+        prefix: /auth.AuthService/SendVerificationCode
+   #   - port: 80
+    route:
+    - destination:
+        host: auth-service.auth.svc.cluster.local
+        port:
+          number: 50032
+  - match:
+    - uri:
+        prefix: /user.UserService/
+    route:
+    - destination:
+        host: user-service.user.svc.cluster.local
+        port:
+          number: 50033
+  - match:
+    - uri:
+        prefix: /chat.ChatService/
+    route:
+    - destination:
+        host: chat-service.chat.svc.cluster.local
+        port:
+          number: 50032

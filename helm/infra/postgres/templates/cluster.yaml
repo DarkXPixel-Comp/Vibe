@@ -1,0 +1,30 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ .Values.cluster.name }}
+  namespace: {{ .Values.namespace | default "infra" }}
+  annotations:
+    kuma.io/sidecar-injection: "disabled"
+spec:
+  imageName: {{ .Values.cluster.image }}
+  instances: {{ .Values.cluster.instances }}
+  primaryUpdateStrategy: unsupervised
+  storage:
+    size: {{ .Values.cluster.storage.size }}
+  bootstrap:
+    initdb:
+      database: {{ (index .Values.databases 0).name }}
+      owner: {{ (index .Values.databases 0).user }}
+      secret:
+        name: {{ (index .Values.databases 0).name }}-db-secret
+  superuserSecret:
+    name: {{ (index .Values.databases 0).name }}-db-secret
+  managed:
+    roles:
+      {{- range .Values.databases }}
+      - name: {{ .user }}
+        login: true
+        passwordSecret:
+          name: {{ .name }}-db-secret
+          key: password
+      {{- end }}

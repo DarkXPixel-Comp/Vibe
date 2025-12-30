@@ -28,13 +28,13 @@ func (r *ChatRepository) BeginTx(ctx context.Context) (pgx.Tx, error) {
 
 func (r *ChatRepository) InsertChat(ctx context.Context, tx pgx.Tx, chatType string, title *string, description *string) (string, error) {
 	var id string
-	err := tx.QueryRow(ctx,
-		`
-			INSERT INTO chats (type, title, description, created_at, last_activity)
-			VALUES ($1, $2, $3, NOW(), NOW())
-			RETURNING id
-		`, chatType, title, description).Scan(&id)
-	return id, err
+    err := tx.QueryRow(ctx,
+        `
+            INSERT INTO chats (type, title, description, created_at, last_activity_at)
+            VALUES ($1, $2, $3, NOW(), NOW())
+            RETURNING id
+        `, chatType, title, description).Scan(&id)
+    return id, err
 }
 
 func (r *ChatRepository) InsertMemberships(ctx context.Context, tx pgx.Tx, chatID string, roles map[string]string) error {

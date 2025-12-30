@@ -13,6 +13,8 @@ spec:
     {{- if .Values.storage.storageClass }}
     storageClass: {{ .Values.storage.storageClass | quote }}
     {{- end }}
+  podAnnotation:
+    sidecar.istio.io/inject: "false"
 
   managed:
     roles:

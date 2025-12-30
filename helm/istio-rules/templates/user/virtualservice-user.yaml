@@ -1,0 +1,13 @@
+# apiVersion: networking.istio.io/v1beta1
+# kind: VirtualService
+# metadata:
+#   name: user-mesh
+#   namespace: user
+# spec:
+#   hosts:
+#     - user-service.user.svc.cluster.local
+#   http:
+#     - route:
+#         - destination:
+#             host: user-service.user.svc.cluster.local
+#             subset: v1

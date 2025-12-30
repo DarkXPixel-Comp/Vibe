@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"fmt"
+	"log"
 	"strings"
 
 	authgrpc "buf.build/gen/go/darkxpixel/vibe-contracts/grpc/go/auth/authgrpc"
@@ -83,9 +84,11 @@ func (s *AuthHandler) ValidateToken(ctx context.Context, req *authproto.Validate
 }
 
 func (s *AuthHandler) Check(ctx context.Context, req *envoyauth.CheckRequest) (*envoyauth.CheckResponse, error) {
+	log.Println("Check")
 	headers := req.Attributes.Request.Http.Headers
 	authHeader, ok := headers["authorization"]
 	if !ok || !strings.HasPrefix(authHeader, "Bearer ") {
+		log.Println("missing or invalid Authorization header")
 		return &envoyauth.CheckResponse{
 			Status:       &googleapis.Status{Code: int32(codes.Unauthenticated), Message: "missing Authorization header"},
 			HttpResponse: &envoyauth.CheckResponse_DeniedResponse{DeniedResponse: &envoyauth.DeniedHttpResponse{Status: &typev3.HttpStatus{Code: typev3.StatusCode(401)}}},
@@ -95,10 +98,12 @@ func (s *AuthHandler) Check(ctx context.Context, req *envoyauth.CheckRequest) (*
 	token := strings.TrimPrefix(authHeader, "Bearer ")
 	response, err := s.ValidateToken(ctx, &authproto.ValidateTokenRequest{Token: token})
 	if err != nil {
+		log.Printf("error validate token: %s", err.Error())
 		return nil, fmt.Errorf("error validate token: %w", err)
 	}
 
 	if !response.Success {
+		log.Println("invalid token")
 		return &envoyauth.CheckResponse{
 			Status:       &googleapis.Status{Code: int32(codes.Unauthenticated), Message: "invaid token"},
 			HttpResponse: &envoyauth.CheckResponse_DeniedResponse{DeniedResponse: &envoyauth.DeniedHttpResponse{Status: &typev3.HttpStatus{Code: typev3.StatusCode(401)}}},
